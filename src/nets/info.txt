@@ -1,0 +1,2 @@
+These directories contain the parameters of DeepONets trained to approximate the time-evolution of different partial differential equations.
+The parameters are saved at various checkpoints through the course of training to later analyze the training process.
