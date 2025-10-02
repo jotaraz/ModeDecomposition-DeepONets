@@ -219,6 +219,10 @@ def find_valid_directories(directories, nets_path="../nets"):
     ]
     return valid_dirs
 
+def get_singular_values(batch_name0, endtag, num_data):
+    batch_name = f"../data/{batch_name0}"
+    name = f"{batch_name}_{endtag}_numd{num_data}_singvals.txt"
+    return np.loadtxt(name)
 
 def main():
     """Main analysis routine."""
@@ -228,15 +232,14 @@ def main():
     _, _, llw, _, batch_name, num_data, endtag = get_dwllw(DIRECTORIES[0])
     print(f"Dataset: {batch_name}, Tag: {endtag}")
     
-    # Load training and test data
-    nt, nb, rtrain, rtest, ptrain, ptest, utrain, utest = load_dataset(
-        batch_name, endtag, CONFIG['num_data_points']
-    )
+    mtrain = 900
+    mtest  = 100
+
+    # Load the singular values of the training data matrix
+    ss_train = get_singular_values(batch_name, endtag, CONFIG['num_data_points'])
     
-    mtrain, mtest = utrain.shape[1], utest.shape[1]
-    
-    # Calculate SVD and base losses
-    ss_train, base_loss_test, T = calculate_base_losses(utrain, utest, llw)
+    # This only approximates the test base loss
+    base_loss_test = ss_train[:llw] * np.sqrt(mtest / mtrain)
     
     # Setup plot
     xmin, xmax = -0.1 * llw, 1.1 * llw
