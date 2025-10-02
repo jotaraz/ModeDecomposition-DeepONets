@@ -18,5 +18,7 @@ To investigate why/where approximation errors arise we decompose the approximati
 - Mode-decomposition enables us to study the coupling between the modes.
 
 ## What does the repository contain?
-
-
+- Code to train DeepONets
+- Code to analyze DeepONet errors (specifically mode-wise errors)
+- Training data
+- Parameters of some trained DeepONets
