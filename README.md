@@ -7,7 +7,7 @@ The thesis was written at TU Delft under the supervision of [Dr. Alexander Heinl
 
 The [DeepONet](https://arxiv.org/abs/1910.03193) is the standard neural network architecture in operator learning: learning an operator (mapping function to function) from data.
 To investigate why/where approximation errors arise we decompose the approximation error twice:
-1. The total approximation error is decomposed into trunk and branch errors, heavily building on the framework derived by [Lanthaler et al.](https://arxiv.org/abs/2102.09618).
+1. The total approximation error is decomposed into trunk and branch errors, heavily building on the framework derived by [Lanthaler et al.](https://arxiv.org/abs/2102.09618)
 2. The branch error is decomposed into mode errors: how well are we approximating the coefficient of a given spatial basis function (or mode)?
 
 ## What are the key findings?
