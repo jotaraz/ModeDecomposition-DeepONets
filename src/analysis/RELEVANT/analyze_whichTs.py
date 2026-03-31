@@ -1,0 +1,391 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct  9 18:32:53 2025
+
+@author: J_Taraz
+"""
+
+def get_colors():
+    f = open("/home/johannes/Nextcloud/Documents/Uni/XI/MA/colors.txt", "r")
+    lines = f.readlines()
+    f.close()
+    colors = []
+    for line in lines:
+        colors.append(line[:-1])
+
+    return colors #print(colors)
+
+colors_list = get_colors()
+
+from ... import don_code
+
+nets_dir = don_code.nets_dir
+
+
+bid   = int(don_code.sys.argv[1])
+lrtag = int(don_code.sys.argv[2])
+LLW   = int(don_code.sys.argv[3])
+dw    = don_code.sys.argv[4] #"d5_w100"
+nep = "5000"
+
+     
+don_code.plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "serif"
+})
+
+check_run = False
+
+all_svd_llw_max = {0: 20, 1: 20, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100}
+
+def llw_ranges(whT):
+    if LLW > 0:
+        llw_range_svd = [LLW]
+        llw_range_gen = [LLW]
+    else:
+        llw_range_gen = don_code.np.arange(2, 100, 8)
+        if bid < 3:
+            llw_range_svd = [2, 10, 18, 20]
+        else:
+            llw_range_svd = llw_range_gen
+    
+    if whT == 0:
+        return llw_range_svd
+    return llw_range_gen
+#svd_llw_range = np.arange(2, svd_llw_max, 8)
+
+
+#colors = ["red", "blue", "green", "orange", "cyan", "gray", "fuchsia", "k"]
+
+#colors = {-1: "red", 0: "blue", 1: "green", 2: "orange", 5: "cyan", 7: "gray", 9: "black"}
+colors = {}
+whichTids = [-1, 0, 1, 2, 5, 7]
+for i,whT in enumerate(whichTids):
+    colors[whT] = colors_list[i]
+colors[9] = colors_list[-1]
+
+
+all_whTs = [-1, 0, 1, 2, 5, 7]
+if bid >= 6:
+    all_whTs = [-1, 0, 1, 2, 5, 9]
+
+
+lr_schedule = don_code.optax.exponential_decay(
+    init_value=2e-3,  
+    transition_steps=500,  
+    decay_rate=0.95,
+    staircase=True  # Set to True if you want discrete decay steps
+)
+optimizer = don_code.optax.sgd(learning_rate=lr_schedule)
+
+def array_to_tuple(raw_color):
+    return (raw_color[0], raw_color[1], raw_color[2])
+
+
+def error_indices(whT):
+    if whT < 0:
+        return don_code.np.array([0, 2], dtype=int)
+    return don_code.np.array([0, 1, 2, 3], dtype=int)
+
+def run_check_DON(direc, epoch, T, ScaledSigma, 
+                  rtrain, ptrain, utrain, ptest, utest, 
+                  nb, nt, truesigma, vh_train, 
+                  exponent=0.0, chptag="cur"):
+    
+    tmp_str     = nets_dir+"/"+direc+"/"+epoch
+
+    tmp_dir = don_code.os.listdir(nets_dir+"/"+direc)
+    if epoch+chptag+"_chp" not in tmp_dir:
+        print(epoch+"_chp", "not in", tmp_dir)
+        return None 
+
+    depth, width, llw, whichT, _, _, _ = don_code.get_dwllw(direc)
+
+    model    = None 
+    VT_train = None 
+    VT_test  = None
+    init_params = None
+    if whichT < 0:
+        if "doStackedFalse" in direc:
+            model = don_code.DeepONet(nb, nt, depth, width, llw)
+        else:
+            model = don_code.StackedDeepONet(nb, nt, depth, width, depth, width, llw)
+        VT_train = vh_train[:llw, :]
+        VT_test  = don_code.jnp.matmul(don_code.jnp.diag(1/truesigma), don_code.jnp.matmul(uu_train[:, :llw].T, utest))
+        init_params = model.init(don_code.jax.random.PRNGKey(0), ptrain, rtrain, ScaledSigma)
+    else:
+        if "doStackedFalse" in direc:
+            model = don_code.TDeepONet(nb, depth, width, llw)
+        else:
+            model = don_code.StackedTDeepONet(nb, depth, width, llw)
+        VT_train = don_code.jnp.matmul(don_code.jnp.diag(1/truesigma), don_code.jnp.matmul(don_code.np.linalg.pinv(T), utrain))
+        VT_test  = don_code.jnp.matmul(don_code.jnp.diag(1/truesigma), don_code.jnp.matmul(don_code.np.linalg.pinv(T), utest))
+        init_params = model.init(don_code.jax.random.PRNGKey(0), ptrain, T, ScaledSigma)
+    
+    params, _   = don_code.load_checkpoint(init_params, init_params, path=tmp_str+chptag+"_chp")
+
+    state  = don_code.TrainState.create(
+                    apply_fn=model.apply,
+                    params=params,
+                    tx=optimizer  
+                )
+    
+    if whichT < 0:
+        upredtrain, _, Btrain = state.apply_fn(params, ptrain, rtrain, ScaledSigma)
+        upredtest,  _, Btest  = state.apply_fn(params, ptest,  rtrain, ScaledSigma)
+    else:
+        upredtrain, _, Btrain = state.apply_fn(params, ptrain, T, ScaledSigma)
+        upredtest,  _, Btest  = state.apply_fn(params, ptest,  T, ScaledSigma)
+
+
+    
+    utrain_norm   = don_code.jnp.mean(utrain**2)
+    utest_norm    = don_code.jnp.mean(utest**2)
+    utrainE_norm  = don_code.jnp.mean(don_code.jnp.matmul(don_code.jnp.diag(truesigma**(1+exponent)), VT_train)** 2)
+    utestE_norm   = don_code.jnp.mean(don_code.jnp.matmul(don_code.jnp.diag(truesigma**(1+exponent)), VT_test)** 2)
+
+    utrain_error  = don_code.jnp.mean( (upredtrain - utrain)**2 ) / utrain_norm
+    utest_error   = don_code.jnp.mean( (upredtest  - utest )**2 ) / utest_norm
+
+    if whichT < 0:
+        utrainE_error = 1.0
+        utestE_error  = 1.0
+    else:
+        A = don_code.jnp.matmul(don_code.jnp.diag(truesigma**(1+exponent)), VT_train)
+        B = don_code.jnp.matmul(don_code.jnp.diag(truesigma**exponent), don_code.jnp.matmul(ScaledSigma, Btrain.T))
+        utrainE_error = don_code.jnp.mean((A - B)** 2) / utrainE_norm
+        A = don_code.jnp.matmul(don_code.jnp.diag(truesigma**(1+exponent)), VT_test)
+        B = don_code.jnp.matmul(don_code.jnp.diag(truesigma**exponent), don_code.jnp.matmul(ScaledSigma, Btest.T))
+        utestE_error  = don_code.jnp.mean((A - B)** 2) / utestE_norm
+
+    return don_code.np.array([utrain_error, utest_error, utrainE_error, utestE_error])
+
+def get_T(direc, epoch, ScaledSigma, 
+            rtrain, ptrain, ptest, nb, nt, 
+            uu_train, batch_name,
+            chptag="cur"):
+    
+    depth, width, llw, whichT, _, _, _ = don_code.get_dwllw(direc)    
+    if whichT >= 0:
+        T = don_code.get_fixed_trunk(whichT, llw, rtrain[:,0], batch_name, uu_train)
+        return T
+    tmp_str     = nets_dir+"/"+direc+"/"+epoch
+    tmp_dir = don_code.os.listdir(nets_dir+"/"+direc)
+    if epoch+chptag+"_chp" not in tmp_dir:
+        print(epoch+"_chp", "not in", tmp_dir)
+        return None 
+
+
+    model    = None 
+    init_params = None
+    if "doStackedFalse" in direc:
+        model = don_code.DeepONet(nb, nt, depth, width, llw)
+    else:
+        model = don_code.StackedDeepONet(nb, nt, depth, width, depth, width, llw)
+    init_params = model.init(don_code.jax.random.PRNGKey(0), ptrain, rtrain, ScaledSigma)
+    
+    params, _   = don_code.load_checkpoint(init_params, init_params, path=tmp_str+chptag+"_chp")
+
+    state  = don_code.TrainState.create(
+                    apply_fn=model.apply,
+                    params=params,
+                    tx=optimizer  
+                )
+    
+    upredtrain, Ttr, Btrain = state.apply_fn(params, ptrain, rtrain, ScaledSigma)
+    upredtest,  Tte, Btest  = state.apply_fn(params, ptest,  rtrain, ScaledSigma)
+    if don_code.np.linalg.norm(Ttr - Tte) < 1e-6:
+        return Ttr 
+    else:
+        print("Ttr != Tte")
+        return None
+    
+
+def read_logfile(d):
+    if batch_name not in d:
+        print("Check whether bid fits dir!")
+        print(batch_name)
+        print(d)
+        
+    if d in all_dirs:
+        logdata = don_code.np.loadtxt(nets_dir+"/"+d+"/log.txt")
+        epochs = logdata[:,0]
+        err_tr = 10**(logdata[:,1]/2)
+        err_te = 10**(logdata[:,4]/2)
+        erE_tr = 10**(logdata[:,8]/2)
+        erE_te = 10**(logdata[:,9]/2)
+        
+        tmp = {}
+        tmp["epochs"] = epochs
+        tmp["err_tr"] = err_tr
+        tmp["err_te"] = err_te
+        tmp["erE_tr"] = erE_tr
+        tmp["erE_te"] = erE_te
+        tmp["last_values"] = don_code.np.array([err_tr[-2], err_te[-2], erE_tr[-2], erE_te[-2]])
+        mintrid = don_code.np.argmin(err_tr)
+        tmp["atbesttr_values"] = don_code.np.array([err_tr[mintrid], err_te[mintrid], erE_tr[mintrid], erE_te[mintrid]])
+
+        return tmp #don_code.np.array([epochs, err_tr, err_te, erE_tr, erE_te])
+    
+    return None
+
+def process_data(d):
+    ret_dict = {}
+    save_return = read_logfile(d)
+    if not save_return:
+        print(d, ": No saved file found.")
+        return None 
+    
+    ret_dict["save"] = save_return
+
+    #epochs = save_return["epochs"]
+    _, _, llw, whichT, _, _, _ = don_code.get_dwllw(d)
+    epoch = "4901"
+    ScaledSigma = don_code.np.eye(llw)
+    T = get_T(d, epoch, ScaledSigma, rtrain, ptrain, ptest, nb, nt, uu_train, batch_name)
+        
+    proj        = don_code.np.eye(don_code.np.shape(T)[0]) - don_code.np.matmul(T, don_code.np.linalg.pinv(T))
+    proj_error2 = don_code.np.sum( don_code.np.matmul(proj, utrain)**2 ) / don_code.np.sum(utrain**2)
+    proj_error  = don_code.np.sqrt(proj_error2)
+    #if proj_error > 1e-4:
+    #    don_code.plt.plot(epochs, 0*epochs + don_code.np.log10(proj_error), '--', color=color1, alpha=0.5)
+
+    ret_dict["proj_error"] = proj_error
+    
+    if check_run:
+        errors_calc = run_check_DON(d, epoch, T, ScaledSigma, 
+                                    rtrain, ptrain, utrain, ptest, utest, 
+                                    nb, nt, ss_train[:llw], vh_train, exponent=0.0)
+        if errors_calc is None:
+            return None
+        ids = error_indices(whichT)
+        if don_code.np.max( don_code.np.abs( (errors_calc[ids]-save_return["last_values"][ids])/errors_calc[ids] ) ) > 1e-6:
+            return None 
+        
+    return ret_dict
+
+def plot_errorcurves():
+    for i in nets.keys():
+        d = nets[i]["name"]
+        ret = process_data(d)
+        _, _, llw, whichT, _, _, _ = don_code.get_dwllw(d)
+        if ret:
+            epochs     = ret["save"]["epochs"]
+            don_code.plt.plot(epochs, ret["save"]["err_te"], '.-', color=colors[whichT], label=don_code.trunk_names[whichT])
+            don_code.plt.plot(epochs, ret["save"]["err_tr"], '--', color=colors[whichT])
+            if whichT >= 0:
+                proj_error = ret["proj_error"]
+                if proj_error > 1e-5:
+                    don_code.plt.plot(epochs, 0*epochs + proj_error, ':', color=colors[whichT], alpha=0.5)
+    
+
+    
+def plot_multLLW(showlast=True):
+
+    minval = 100
+    maxval = 0
+
+    fig, axs = don_code.plt.subplots(1, 1, figsize=(8,6))
+
+    grand_dict = {}
+    for whT in all_whTs:
+        grand_dict[whT] = {}
+    
+    for i in nets.keys():
+        whT = nets[i]["whT"]
+        llw = nets[i]["llw"]
+        name = nets[i]["name"]
+        ret  = process_data(name)
+        if ret is None:
+            continue 
+        if showlast:
+            grand_dict[whT][llw] =  (ret["save"]["last_values"][0], ret["save"]["last_values"][1], ret["proj_error"])
+        else:
+            grand_dict[whT][llw] =  (ret["save"]["atbesttr_values"][0], ret["save"]["atbesttr_values"][1], ret["proj_error"])
+            
+
+    for whT in all_whTs:
+        xax = grand_dict[whT].keys()
+        etr  = []
+        ete  = []
+        proj = []
+
+        for x in xax:
+            a,b,c = grand_dict[whT][x]
+            etr.append(a)
+            ete.append(b)
+            proj.append(c)
+
+        axs.plot(xax, etr, '--', color=colors[whT], linewidth=3)
+        axs.plot(xax, ete, 'o-', color=colors[whT], label=don_code.trunk_names[whT], linewidth=3)
+        minval = min(minval, don_code.np.min(etr), don_code.np.min(ete))
+        maxval = max(maxval, don_code.np.max(etr), don_code.np.max(ete))
+        #if whT >= 0:
+        axs.plot(xax, proj, ':', color=colors[whT], linewidth=3)
+
+    axs.set_ylim((minval/4, maxval*2))
+
+    axs.legend(fontsize=15)
+    
+    axs.set_xlabel(r"Inner Dimension $N$", fontsize=20)
+    axs.set_ylabel(r"Relative Error $\delta$", fontsize=20)
+    axs.tick_params(labelsize=15)
+    
+
+    return fig, axs
+
+all_dirs = don_code.os.listdir(nets_dir)
+
+batch_name, uendtag, _ = don_code.dic(bid)
+
+nets = {}
+
+i = 0
+
+
+
+
+
+for whT in all_whTs:
+     for llw in llw_ranges(whT):
+        tmp = {}
+        if whT == 0 and llw > all_svd_llw_max[bid]:
+            tmp_llw = all_svd_llw_max[bid]
+        else:
+            tmp_llw = llw
+        tmp["name"] = "whichT"+str(whT)+"_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep5000_"+dw+"_llw"+str(tmp_llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0"
+        tmp["llw"]  = tmp_llw 
+        tmp["whT"]  = whT
+        nets[i] = tmp
+        i += 1
+
+
+
+num_data = 1000
+nt, nb, rtrain, rtest, ptrain, ptest, utrain, utest = don_code.load_dataset(batch_name, uendtag, num_data)
+uu_train, ss_train, vh_train = don_code.jnp.linalg.svd(utrain, full_matrices=False)
+
+fig, axs = 0,0
+
+showlast = True
+
+nametag = "/home/johannes/Nextcloud/Documents/Uni/XI/MA/new2/imgs/differentbases/"
+if LLW > 0:
+    nametag += "errorcurves_N"+str(LLW)
+    plot_errorcurves()
+else:
+    nametag += "error_overN"
+    fig, axs = plot_multLLW(showlast=showlast)
+
+axs.set_yscale("log")
+
+tmp = nametag+"_bid"+str(bid)+"_lr"+str(lrtag)+"_"+dw
+if showlast:
+    tmp += "_besttr"
+tmp += ".pdf"
+fig.savefig(tmp)
+
+don_code.plt.show()
+
+
+
