@@ -140,7 +140,7 @@ for ib, bid in enumerate(bids):
             #    direcs.append("whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lr"+optim+"40_v0")
             #else:
             direcs.append("whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lr"+optim+"32_v0")
-            direcs.append("whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lr"+optim+"32_v0")
+            #direcs.append("whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lr"+optim+"32_v0")
         
         num_columns = len(wun_s)
 
@@ -176,6 +176,12 @@ for ib, bid in enumerate(bids):
             freq_comps.append(freqs[im])
 
         #ax3.legend(loc='lower right')
+        print("direcs")
+        for direc in direcs:
+            if direc in alldirecs:
+                print(direc)
+        print(" ")
+
 
         for direc in direcs:
             if direc not in alldirecs:
@@ -184,7 +190,7 @@ for ib, bid in enumerate(bids):
                 modeloss_data = np.loadtxt(nets_dir+"/"+direc+"/log_modes.txt")
                 train_modes = modeloss_data[:,1      :1+  llw]
                 test_modes  = modeloss_data[:,1+2*llw:1+3*llw]
-            
+
 
                 #axs_tmp[ib].plot(np.ones(llw), '--', color="k")
                 #axs_tmp[ib].plot(0.1*np.ones(llw), '--', color="k")

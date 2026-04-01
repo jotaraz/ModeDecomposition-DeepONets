@@ -191,7 +191,7 @@ elif whichones == 4:
 elif whichones == 5:
     direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp-1.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
               "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp-0.5_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
-              "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
+              #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
               "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
               "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.5_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
               "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp1.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
@@ -207,15 +207,15 @@ elif whichones == 10:
 
 elif whichones == 11:
     direcs = [
-            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD32_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD32_v0",
             "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam32_v0",
             "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAda32_v0",
             "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep5000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD32_v0",
-            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep5000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam32_v0",
-            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep5000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAda32_v0",
-            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD32_v0",
-            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam32_v0",
-            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAda32_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep5000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam32_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep5000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAda32_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD32_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam32_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w335_llw50_bat"+batch_name+"_"+uendtag+"_numd1000_lrAda32_v0",
         ]
     num_columns = 3
 
@@ -272,6 +272,8 @@ for direc in direcs:
             print("no modes ", direc)
     else:
         print("not there", direc)
+print("x")
+print("x")
 print("x")
 kmax = k+1
 
@@ -482,7 +484,7 @@ for direc in direcs:
                 text_y = 2e-5
             # after the thesis, I changed the y-position, it used to be 1.0*ymax_tr (but that looks weird)
             
-            tmp = axs[1+2*k].text(0.0, text_y, title, color="k", fontsize=fontsize, horizontalalignment='left', verticalalignment='bottom')
+            tmp = axs[1+2*k].text(1.0, text_y, title, color="k", fontsize=fontsize, horizontalalignment='left', verticalalignment='bottom')
             # tmp = axs[1+2*k].text(0.0, 1e-6, title, color="k", fontsize=fontsize, horizontalalignment='left', verticalalignment='bottom')
             #tmp = axs[1+2*k].text(1.05*llw, 500, title, color="k", fontsize=fontsize, horizontalalignment='right', verticalalignment='top')
             tmp.set_bbox(dict(facecolor=colors[k], alpha=0.4, edgecolor=colors[k]))

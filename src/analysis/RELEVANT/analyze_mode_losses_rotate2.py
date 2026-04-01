@@ -420,7 +420,7 @@ for direc in direcs:
             elif whichones == 5:
                 text_y = 2e-5
 
-            tmp = axs[1+2*k].text(0.0, text_y, title, color="k", fontsize=fontsize, horizontalalignment='left', verticalalignment='bottom')
+            tmp = axs[1+2*k].text(1.0, text_y, title, color="k", fontsize=fontsize, horizontalalignment='left', verticalalignment='bottom')
             tmp.set_bbox(dict(facecolor=colors[k], alpha=0.4, edgecolor=colors[k]))
 
             axs[1+2*k].set_xlim((xmin, xmax))

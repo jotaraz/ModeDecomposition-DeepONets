@@ -78,16 +78,19 @@ wun = wun_s[sizeid]
 batch_name, uendtag, _ = don_code.dic(bid)
 
 if whichones == 0:
-    direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
-              "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
+    direcs = [
+            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrAdam"+str(lrtag)+"_v0",
               ]
     #num_columns = 1
 elif whichones == 1:
-    direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD"+str(lrtag)+"_v0",
-             "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD"+str(lrtag)+"_v0",
+    direcs = [
+            "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD"+str(lrtag)+"_v0",
+            #"whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w"+str(wun)+"_llw"+str(llw)+"_bat"+batch_name+"_"+uendtag+"_numd1000_lrSGD"+str(lrtag)+"_v0",
             ]
     #num_columns = 1
 
+print(f"{direcs=}")
 
 _, _, llw, _, batch_name, num_data, endtag = don_code.get_dwllw(direcs[0])
 print(batch_name, endtag)
@@ -249,10 +252,12 @@ for direc in direcs:
                 # or approx np.ones(llw)
                 if ik == 0:
                     axs[ik].plot(shifted_xax, unweighted_base_loss, '.-', color="k", label="base")
+                    print("ik == 0, base")
                     axs[2+ik].plot(shifted_xax, tmp_mode_losses[do_keys[ik]]["base"], '.-', color="k") #, label="base")
                 else:
                     axs[ik].plot(shifted_xax, unweighted_base_loss, '.-', color="k") #, label="base")
                     axs[2+ik].plot(shifted_xax, tmp_mode_losses[do_keys[ik]]["base"], '.-', color="k", label="base")
+                    print("ik != 0, base")
                 
                     
             
@@ -279,6 +284,7 @@ for direc in direcs:
                     axs[ik].plot(shifted_xax, ytmp, '--', dashes=dashes, color=base_col * (0.2+0.7*epoch/max_epoch), alpha=alphaval)
                     if ik == 0:
                         axs[ik].plot([], [], '--', color=base_col * (0.2+0.7*epoch/max_epoch), alpha=alphaval, label=lab)
+                        print("i == 0, ", lab)
                             
 
 
@@ -292,6 +298,7 @@ for direc in direcs:
                     axs[2+ik].plot(shifted_xax, ytmp, '--', dashes=dashes, color=base_col * (0.2+0.7*epoch/max_epoch), alpha=alphaval)
                     if ik != 0:
                         axs[2+ik].plot([] ,[], '--', color=base_col * (0.2+0.7*epoch/max_epoch), alpha=alphaval, label=lab)
+                        print("i != 0, ", lab)
                             
 
 

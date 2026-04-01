@@ -17,31 +17,49 @@ from don_code import *
 
 jax.config.update('jax_enable_x64', True)
 
+"""
+see don_code for more details.
+trunk_names[-1] = "Learned"
+trunk_names[0]  = "SVD"
+trunk_names[1] = "Leg."
+trunk_names[2] = "Cheb."
+trunk_names[3] = "Trig."
+trunk_names[4] = "EvenSin"
+trunk_names[5] = "Sin"
+trunk_names[6] = "EvenCos"
+trunk_names[7] = "Cos"
+trunk_names[8] = "BatSpecTrig"
+trunk_names[9] = "Cos1"
+trunk_names[10] = "LegN"
+trunk_names[11] = "CheN"
 
-Nepochs     =  int(sys.argv[1])
-vtag        =  int(sys.argv[2])
-d           = int(sys.argv[3])
-w           = int(sys.argv[4])
-llw         = int(sys.argv[5])
-doplot      = bool(int(sys.argv[6]))
-batch_name  = sys.argv[7]
-lrstag      = sys.argv[8]
-init_lr     = float(sys.argv[9])  # Initial learning rate
-decay_rate  = float(sys.argv[10])  # Decay factor (e.g., 0.99 means lr decreases by 1% every 500 epochs)
-num_data    = int(sys.argv[11])
-which_T     = int(sys.argv[12])
-dotruesigma = int(sys.argv[13])
-uendtag     = sys.argv[14]
-sigmascale  = sys.argv[15]
-exponent    = float(sys.argv[16])
-doadam      = bool(int(sys.argv[17]))
-dostacked   = bool(int(sys.argv[18]))
+"""
+
+Nepochs     = int(sys.argv[1]) # number of epochs
+vtag        = int(sys.argv[2]) # version tag: usually set to 0, used to indicate differet instances of DeepONets who share all hyperparameters
+d           = int(sys.argv[3]) # depth
+w           = int(sys.argv[4]) # width of the hidden lazyers
+llw         = int(sys.argv[5]) # number of output neurons of branch and trunk net (“inner dimension”), N in the paper
+doplot      = bool(int(sys.argv[6])) # should a plot of the errorcurve be displayed? (is saved in any case)
+batch_name  = sys.argv[7] # which PDE? choose from 'ModeDecomposition-DeepONets/data/datasets', e.g., 'kdvnx401_dt0.0001_nc5_m5000' (do not include tau here)
+lrstag      = sys.argv[8] # just a string for you, to identify learning rate and decay factor in file name
+init_lr     = float(sys.argv[9])  # Initial learning rate, e.g., 2e-3, or 1e-4
+decay_rate  = float(sys.argv[10])  # Decay factor (e.g., 0.99 means lr decreases by 1% every 500 epochs), usually 0.95
+num_data    = int(sys.argv[11]) # usually 1000: number of samples, these are split 90/10 as train/test
+which_T     = int(sys.argv[12]) # indicates which basis, see comments above
+dotruesigma = int(sys.argv[13]) # should \tilde{A} be $factor * \sigma_1 * T B^T$ (set to 0), or $factor * T \Sigma B^T$ (set to 1)
+uendtag     = sys.argv[14] # this is basically tau/dt, default/standard example is 1999
+sigmascale  = sys.argv[15] # this is the $factor$, from dotruesigma: if you want $\tilde{A} = T B^T$, set sigmascale="First", if you want $\tilde{A} = T \Sigma B^T$, set sigmascale="1.0"
+exponent    = float(sys.argv[16]) # the exponent from reweighting
+doadam      = bool(int(sys.argv[17])) # Adam or GD? (if you want AdaGrad set this to True as well, and set momentum=False)
+dostacked   = bool(int(sys.argv[18])) # stacked or unstacked network?
+adaptive_init_lr = False # if you use exponent != 0 and SGD, set this to True, otherwise dont
+momentum    = True # only set to False, for AdaGrad. Adam needs True, for (normal) GD it does not matter
+
+transfinp   = False 
 alphaT      = 0.0 #float(sys.argv[8])
 alphaB      = 0.0 #float(sys.argv[9])
 lambdarange = 0.0
-adaptive_init_lr = False
-momentum    = True
-transfinp   = False
 
 
 

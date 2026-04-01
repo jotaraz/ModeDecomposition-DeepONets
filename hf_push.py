@@ -50,28 +50,45 @@ def push(repo_id: str, token: str | None) -> None:
             print(f"  Skipping {local_rel!r} — directory not found.")
             continue
 
-        n_files = sum(len(files) for _, _, files in os.walk(local_abs))
-        print(f"\nUploading {local_rel!r}  ({n_files} files) -> {repo_path!r}")
+        # For data/nets, upload each trained-network subdirectory separately so
+        # that each commit stays small (~300 MB) and no single upload is too large.
+        subdirs = sorted(
+            d for d in os.listdir(local_abs)
+            if os.path.isdir(os.path.join(local_abs, d))
+        )
 
-        # upload_large_folder handles resumption and parallel uploads well for
-        # directories with many files; falls back gracefully on older hub versions.
-        try:
-            api.upload_large_folder(
-                folder_path=local_abs,
-                path_in_repo=repo_path,
-                repo_id=repo_id,
-                repo_type="dataset",
-            )
-        except AttributeError:
-            # huggingface_hub < 0.22 — fall back to upload_folder with multi-commit
-            print("  (upload_large_folder unavailable, falling back to upload_folder)")
+        if subdirs:
+            # Also upload any loose files sitting directly in the directory.
+            loose_files = [
+                f for f in os.listdir(local_abs)
+                if os.path.isfile(os.path.join(local_abs, f))
+            ]
+            if loose_files:
+                subdirs = [""] + subdirs  # empty string means the dir itself
+
+            total = len([s for s in subdirs if s]) + (1 if "" in subdirs else 0)
+            print(f"\nUploading {local_rel!r}  ({total} batches) -> {repo_path!r}")
+
+            for i, sub in enumerate(subdirs, 1):
+                src = os.path.join(local_abs, sub) if sub else local_abs
+                dst = f"{repo_path}/{sub}" if sub else repo_path
+                n = sum(len(fs) for _, _, fs in os.walk(src)) if sub else len(loose_files)
+                print(f"  [{i}/{total}] {sub or '(loose files)'}  ({n} files)")
+                api.upload_folder(
+                    folder_path=src,
+                    path_in_repo=dst,
+                    repo_id=repo_id,
+                    repo_type="dataset",
+                )
+        else:
+            # Flat directory (no subdirs) — upload in one shot.
+            n_files = sum(len(fs) for _, _, fs in os.walk(local_abs))
+            print(f"\nUploading {local_rel!r}  ({n_files} files) -> {repo_path!r}")
             api.upload_folder(
                 folder_path=local_abs,
                 path_in_repo=repo_path,
                 repo_id=repo_id,
                 repo_type="dataset",
-                multi_commits=True,
-                multi_commits_verbose=True,
             )
 
         print(f"  Done: {local_rel!r}")

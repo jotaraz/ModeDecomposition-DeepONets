@@ -124,26 +124,7 @@ Then generate all figures at once:
 python produce_all_figures.py
 ```
 
-To regenerate a specific figure, edit `produce_all_figures.py` and set `take_keys` to only the desired figure key, or run the corresponding command directly. The mapping is:
-
-| Key | Figure | Command |
-|-----|--------|---------|
-| `1_top_right` | Fig. 1 (top right) | `python -m src.analysis.RELEVANT.analyze_whichTs_ga` |
-| `1_bottom_right` | Fig. 1 (bottom right) | `python -m src.analysis.RELEVANT.plot_gd_or_adam_modelosses_ga` |
-| `2` | Fig. 2 | `python -m src.analysis.RELEVANT.analyze_whichTs_newlayout2 3 40 -1 d5_w100` |
-| `3` | Fig. 3 | `python -m src.analysis.RELEVANT.plot_gd_or_adam_modelosses2 3 1 1 2` |
-| `4` | Fig. 4 | `python -m src.analysis.RELEVANT.analyze_mode_losses_rotate 3 4 1 32` |
-| `5` | Fig. 5 | `python -m src.analysis.RELEVANT.plot_gd_or_adam_modelosses2 3 0 1 2` |
-| `6` | Fig. 6 | `python src/analysis/spectral_bias/plot_res3_sidebyside_mat_gridspec.py 0.2` |
-| `7` | Fig. 7 | `python -m src.analysis.RELEVANT.investigate_branch_sb_scale2 2 1` |
-| `8` | Fig. 8 | `python -m src.analysis.RELEVANT.analyze_mode_losses_rotate2 3 0 2 32` |
-| `9a` | Fig. 9a | `python -m src.analysis.RELEVANT.show_components_mult_multsizes 3 -1 4000 1` |
-| `9b` | Fig. 9b | `python -m src.analysis.RELEVANT.show_components_2x2 3 0 3 4000 10000` |
-| `10` | Fig. 10 | `python -m src.analysis.RELEVANT.analyze_mode_losses_rotate 3 5 1 32` |
-| `11` | Fig. 11 | `python -m src.analysis.RELEVANT.analyze_mode_losses_rotate 3 11 2 32` |
-| `12` | Fig. 12 | `python src/analysis/RELEVANT/synth_freq_comp_fromFILES.py` |
-
-All scripts should be run from the repository root.
+To regenerate a specific figure, edit `produce_all_figures.py` and set `take_keys` to only the desired figure key, or run the corresponding command directly.
 
 ## Data
 
@@ -161,13 +142,13 @@ After cloning the repository, fetch the data with:
 
 ```bash
 pip install huggingface_hub
-python hf_pull.py username/deeponet-data
+python hf_pull.py jo-chen/deeponet-data
 ```
 
 To skip the 20 GB model checkpoints and only download the datasets needed for training or re-running analysis from scratch:
 
 ```bash
-python hf_pull.py username/deeponet-data --subset datasets sb_data
+python hf_pull.py jo-chen/deeponet-data --subset datasets sb_data
 ```
 
 Files are placed directly into the correct locations under `data/` in the repository root.
