@@ -38,7 +38,7 @@ trunk_names[11] = "CheN"
 Nepochs     = int(sys.argv[1]) # number of epochs
 vtag        = int(sys.argv[2]) # version tag: usually set to 0, used to indicate differet instances of DeepONets who share all hyperparameters
 d           = int(sys.argv[3]) # depth
-w           = int(sys.argv[4]) # width of the hidden lazyers
+w           = int(sys.argv[4]) # width of the hidden layers
 llw         = int(sys.argv[5]) # number of output neurons of branch and trunk net (“inner dimension”), N in the paper
 doplot      = bool(int(sys.argv[6])) # should a plot of the errorcurve be displayed? (is saved in any case)
 batch_name  = sys.argv[7] # which PDE? choose from 'ModeDecomposition-DeepONets/data/datasets', e.g., 'kdvnx401_dt0.0001_nc5_m5000' (do not include tau here)
@@ -49,7 +49,7 @@ num_data    = int(sys.argv[11]) # usually 1000: number of samples, these are spl
 which_T     = int(sys.argv[12]) # indicates which basis, see comments above
 dotruesigma = int(sys.argv[13]) # should \tilde{A} be $factor * \sigma_1 * T B^T$ (set to 0), or $factor * T \Sigma B^T$ (set to 1)
 uendtag     = sys.argv[14] # this is basically tau/dt, default/standard example is 1999
-sigmascale  = sys.argv[15] # this is the $factor$, from dotruesigma: if you want $\tilde{A} = T B^T$, set sigmascale="First", if you want $\tilde{A} = T \Sigma B^T$, set sigmascale="1.0"
+sigmascale  = sys.argv[15] # this is the $factor$, from dotruesigma: if you want $\tilde{A} = T B^T$ (i.e., factor=1/\sigma_1), set sigmascale="First", and if you want $\tilde{A} = T \Sigma B^T$ (i.e., factor=1.0), set sigmascale="1.0"
 exponent    = float(sys.argv[16]) # the exponent from reweighting
 doadam      = bool(int(sys.argv[17])) # Adam or GD? (if you want AdaGrad set this to True as well, and set momentum=False)
 dostacked   = bool(int(sys.argv[18])) # stacked or unstacked network?
