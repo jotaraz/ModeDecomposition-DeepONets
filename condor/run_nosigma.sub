@@ -9,6 +9,7 @@
 # ---------------------------------------------------------------------------
 
 # Wrapper that sets cwd=src/, forces CPU, headless matplotlib, and runs the job.
+initialdir   = $ENV(HOME)/ModeDecomposition-DeepONets
 executable   = condor/run_nosigma.sh
 arguments    =
 
@@ -22,11 +23,12 @@ error        = condor/logs/run_nosigma.$(ClusterId).$(ProcId).err
 log          = condor/logs/run_nosigma.$(ClusterId).$(ProcId).log
 
 # --- Resource request ------------------------------------------------------
-# CPU-only job: request no GPUs. Memory/disk are modest — one KdV dataset
+# CPU-only job: request no GPUs. Memory/disk (MB) are modest — one KdV dataset
 # (nx=401, 1000 samples) plus a width-335 depth-5 JAX MLP over 4000 epochs.
+# 8192 MB is comfortable headroom; real use is well under.
 request_cpus   = 4
-request_memory = 8192   # MB (8 GB — comfortable headroom; real use is well under)
-request_disk   = 4096   # MB
+request_memory = 8192
+request_disk   = 4096
 request_gpus   = 0
 
 # Optional: cap the price this job will pay while running, and what to do if

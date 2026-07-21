@@ -1,0 +1,25 @@
+# Download HuggingFace datasets on a compute node (not the login node).
+#   condor_submit_bid <BID> condor/hf_pull.sub
+# Depends on .venv-linux existing (run condor/build_env.sub first).
+
+initialdir   = $ENV(HOME)/ModeDecomposition-DeepONets
+executable   = condor/hf_pull.sh
+arguments    =
+getenv       = True
+
+# Which subset to fetch. Training only needs "datasets" (~280 MB). For the full
+# ~20 GB checkpoints use HF_SUBSET=nets AND bump request_disk to ~30000 below.
+environment  = "HF_SUBSET=datasets"
+
+output       = condor/logs/hf_pull.$(ClusterId).out
+error        = condor/logs/hf_pull.$(ClusterId).err
+log          = condor/logs/hf_pull.$(ClusterId).log
+
+# Network/IO bound. Disk (MB) sized for the "datasets" subset.
+# Raise request_disk to >= 30000 if pulling the 20 GB "nets" subset.
+request_cpus   = 2
+request_memory = 4096
+request_disk   = 4096
+request_gpus   = 0
+
+queue

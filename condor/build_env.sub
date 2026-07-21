@@ -1,0 +1,21 @@
+# Build the Linux venv on a compute node (not the login node).
+#   condor_submit_bid <BID> condor/build_env.sub
+# Home is shared Lustre, so .venv-linux persists for all later jobs.
+
+initialdir   = $ENV(HOME)/ModeDecomposition-DeepONets
+executable   = condor/build_env.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/build_env.$(ClusterId).out
+error        = condor/logs/build_env.$(ClusterId).err
+log          = condor/logs/build_env.$(ClusterId).log
+
+# Install is network/IO bound, not compute heavy. Disk (MB) must fit the jaxlib
+# CPU wheel + the whole venv (thousands of small files on Lustre — a bit slow).
+request_cpus   = 2
+request_memory = 4096
+request_disk   = 8192
+request_gpus   = 0
+
+queue

@@ -13,14 +13,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 # --- Python environment ---------------------------------------------------
-# The committed .venv is a macOS venv and will NOT work on the Linux cluster.
-# Provide a Linux env one of two ways (edit to match your setup):
-#   (a) point CONDA/venv activation here, or
-#   (b) `module load` + a prebuilt env.
-# By default we activate $REPO_ROOT/.venv if present, else fall back to PATH.
-if [[ -f "${REPO_ROOT}/.venv/bin/activate" ]]; then
+# Use the Linux venv built on the cluster by condor/build_env.sub. (The repo's
+# .venv is a macOS venv and will NOT run here; .venv-linux is the cluster one.)
+if [[ -f "${REPO_ROOT}/.venv-linux/bin/activate" ]]; then
+    # shellcheck disable=SC1091
+    source "${REPO_ROOT}/.venv-linux/bin/activate"
+elif [[ -f "${REPO_ROOT}/.venv/bin/activate" ]]; then
     # shellcheck disable=SC1091
     source "${REPO_ROOT}/.venv/bin/activate"
+else
+    echo "ERROR: no .venv-linux — run condor/build_env.sub first." >&2
+    exit 1
 fi
 
 # --- Force CPU + headless plotting ---------------------------------------
