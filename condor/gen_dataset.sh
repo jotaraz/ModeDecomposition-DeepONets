@@ -24,9 +24,12 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 # Provide a Linux env one of two ways (edit to match your setup):
 #   (a) point CONDA/venv activation here, or
 #   (b) `module load` + a prebuilt env.
-# By default we activate $REPO_ROOT/.venv if present, else fall back to PATH.
-# Only numpy + scipy are needed for generation.
-if [[ -f "${REPO_ROOT}/.venv/bin/activate" ]]; then
+# Use the Linux venv built on the cluster (condor/build_env.sub); only numpy +
+# scipy are needed for generation. Fall back to the repo's .venv if present.
+if [[ -f "${REPO_ROOT}/.venv-linux/bin/activate" ]]; then
+    # shellcheck disable=SC1091
+    source "${REPO_ROOT}/.venv-linux/bin/activate"
+elif [[ -f "${REPO_ROOT}/.venv/bin/activate" ]]; then
     # shellcheck disable=SC1091
     source "${REPO_ROOT}/.venv/bin/activate"
 fi

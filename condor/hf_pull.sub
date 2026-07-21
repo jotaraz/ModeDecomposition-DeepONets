@@ -2,7 +2,7 @@
 #   condor_submit_bid <BID> condor/hf_pull.sub
 # Depends on .venv-linux existing (run condor/build_env.sub first).
 
-initialdir   = $ENV(HOME)/ModeDecomposition-DeepONets
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
 executable   = condor/hf_pull.sh
 arguments    =
 getenv       = True

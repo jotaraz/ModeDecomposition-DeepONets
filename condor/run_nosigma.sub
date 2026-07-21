@@ -9,7 +9,7 @@
 # ---------------------------------------------------------------------------
 
 # Wrapper that sets cwd=src/, forces CPU, headless matplotlib, and runs the job.
-initialdir   = $ENV(HOME)/ModeDecomposition-DeepONets
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
 executable   = condor/run_nosigma.sh
 arguments    =
 

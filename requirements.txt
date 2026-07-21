@@ -1,0 +1,11 @@
+# Runtime deps for DeepONet training + data tooling on the MPI-IS cluster
+# (Ubuntu 22.04, system /usr/bin/python3.10). Versions are intentionally loose:
+# condor/build_env.sh installs these, runs an import smoke-test, then writes
+# requirements.lock.txt via `pip freeze` so you get a reproducible pin afterwards.
+jax[cpu]
+flax
+optax
+numpy
+scipy
+matplotlib
+huggingface_hub

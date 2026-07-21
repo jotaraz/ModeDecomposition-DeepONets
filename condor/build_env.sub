@@ -2,7 +2,7 @@
 #   condor_submit_bid <BID> condor/build_env.sub
 # Home is shared Lustre, so .venv-linux persists for all later jobs.
 
-initialdir   = $ENV(HOME)/ModeDecomposition-DeepONets
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
 executable   = condor/build_env.sh
 arguments    =
 getenv       = True

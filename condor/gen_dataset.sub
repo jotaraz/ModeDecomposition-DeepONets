@@ -10,6 +10,7 @@
 # ---------------------------------------------------------------------------
 
 # Wrapper that sets cwd=2d-pdes/ and runs generate_dataset.py.
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
 executable   = condor/gen_dataset.sh
 arguments    =
 
