@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: single CPU training run of src/run_nosigma.py
+#
+# Submit WITH a bid (this is what sets your scheduling priority on the cluster):
+#     condor_submit_bid <BID> condor/run_nosigma.sub
+#
+# See notes at the bottom for choosing <BID>. Do NOT use plain `condor_submit`;
+# on the bidding cluster a job with no bid effectively never runs.
+# ---------------------------------------------------------------------------
+
+# Wrapper that sets cwd=src/, forces CPU, headless matplotlib, and runs the job.
+executable   = condor/run_nosigma.sh
+arguments    =
+
+# Ship the whole repo's environment variables to the node (harmless; the
+# wrapper sets the important ones explicitly anyway).
+getenv       = True
+
+# --- Logs (the condor/logs/ directory must already exist) ------------------
+output       = condor/logs/run_nosigma.$(ClusterId).$(ProcId).out
+error        = condor/logs/run_nosigma.$(ClusterId).$(ProcId).err
+log          = condor/logs/run_nosigma.$(ClusterId).$(ProcId).log
+
+# --- Resource request ------------------------------------------------------
+# CPU-only job: request no GPUs. Memory/disk are modest — one KdV dataset
+# (nx=401, 1000 samples) plus a width-335 depth-5 JAX MLP over 4000 epochs.
+request_cpus   = 4
+request_memory = 8192   # MB (8 GB — comfortable headroom; real use is well under)
+request_disk   = 4096   # MB
+request_gpus   = 0
+
+# Optional: cap the price this job will pay while running, and what to do if
+# the market price rises above it (keeps a long CPU job from being expensive).
+# Uncomment and tune to your cluster's going rate if desired.
+# +MaxRunningPrice          = 50
+# +RunningPriceExceededAction = "restart"
+
+queue
+
+# ---------------------------------------------------------------------------
+# Choosing a bid  (passed via `condor_submit_bid <BID> ...`, NOT set here)
+#
+# The bid is your priority in the cluster's virtual market — higher = scheduled
+# sooner and less likely to be preempted, at the cost of more of your virtual
+# budget. It is unrelated to how many resources you request.
+#
+#   ~10–15   low priority; fine if you're not in a hurry and the cluster is idle
+#   ~25      SENSIBLE DEFAULT for a routine CPU job like this one  <-- recommend
+#   ~50+     jump the queue / avoid preemption when you need the result soon
+#
+# This is a cheap, non-urgent CPU job, so a bid of ~25 is reasonable. Bump to
+# 50 only if the CPU queue is busy and you need it to run right away.
+# ---------------------------------------------------------------------------

@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: generate the 2D heat-equation datasets (sine K=8 +
+# GRF l=0.1/0.2 alternating), 1000 samples each, at t=0.004.
+#
+# Submit WITH a bid (this is what sets your scheduling priority on the cluster):
+#     condor_submit_bid <BID> condor/gen_dataset.sub
+#
+# See notes at the bottom for choosing <BID>. Do NOT use plain `condor_submit`;
+# on the bidding cluster a job with no bid effectively never runs.
+# ---------------------------------------------------------------------------
+
+# Wrapper that sets cwd=2d-pdes/ and runs generate_dataset.py.
+executable   = condor/gen_dataset.sh
+arguments    =
+
+# Ship the submitting environment's variables to the node.
+getenv       = True
+
+# --- Logs (the condor/logs/ directory must already exist) ------------------
+output       = condor/logs/gen_dataset.$(ClusterId).$(ProcId).out
+error        = condor/logs/gen_dataset.$(ClusterId).$(ProcId).err
+log          = condor/logs/gen_dataset.$(ClusterId).$(ProcId).log
+
+# --- Resource request ------------------------------------------------------
+# CPU-only job -- request NO GPU. The generator is pure NumPy + scipy.fft with
+# no CUDA path, so a GPU would sit 100% idle. The work is tiny (64x64 grids,
+# O(N^2 log N) FFTs) and I/O-bound (np.savetxt of ~4M-value text files), so a
+# single core is plenty; memory is dominated by a few 33 MB arrays.
+request_cpus   = 1
+request_memory = 4096   # MB (4 GB -- generous; real use is well under 1 GB)
+request_disk   = 4096   # MB (output text files total ~0.3-0.5 GB)
+request_gpus   = 0
+
+queue
+
+# ---------------------------------------------------------------------------
+# Choosing a bid  (passed via `condor_submit_bid <BID> ...`, NOT set here)
+#
+# The bid is your priority in the cluster's virtual market -- higher = scheduled
+# sooner and less likely to be preempted, at the cost of more of your virtual
+# budget. It is unrelated to how many resources you request.
+#
+#   ~10-15   low priority; FINE for this job -- it's cheap, fast, non-urgent
+#   ~25      sensible default if the CPU queue is busy and you want it promptly
+#   ~50+     only if you need the datasets right now
+#
+# This job finishes in well under a couple of minutes, so a low bid (~15) is
+# perfectly reasonable.
+# ---------------------------------------------------------------------------
