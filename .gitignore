@@ -23,9 +23,13 @@ build/
 venv/
 env/
 .env
+.venv-linux/
+
 
 # Jupyter notebooks checkpoints
 .ipynb_checkpoints/
+
+condor/
 
 # IDE / editor
 .idea/

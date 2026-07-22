@@ -28,8 +28,8 @@ log          = condor/logs/gen_dataset.$(ClusterId).$(ProcId).log
 # O(N^2 log N) FFTs) and I/O-bound (np.savetxt of ~4M-value text files), so a
 # single core is plenty; memory is dominated by a few 33 MB arrays.
 request_cpus   = 1
-request_memory = 4096   # MB (4 GB -- generous; real use is well under 1 GB)
-request_disk   = 4096   # MB (output text files total ~0.3-0.5 GB)
+request_memory = 4096
+request_disk   = 4096
 request_gpus   = 0
 
 queue
