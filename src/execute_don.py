@@ -111,7 +111,8 @@ if transfinp:
     stem += "_tf"+str(r)
 stem += "_v"+str(vtag)
 
-dirs = os.listdir("nets")
+os.makedirs(nets_dir, exist_ok=True)
+dirs = os.listdir(nets_dir)
 
 print("stem :", stem)
 
@@ -211,7 +212,7 @@ else:
 
     #print("stem2:", stem2)
 
-    stem = "nets/"+stem
+    stem = os.path.join(nets_dir, stem)
     os.mkdir(stem)
     param_base = stem+"/"
     np.savetxt(param_base+"lambdas.txt", lambdas)
