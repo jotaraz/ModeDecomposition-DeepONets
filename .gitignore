@@ -3,6 +3,8 @@ data/nets/
 data/datasets/
 data/sb_data/
 
+notes-plan.md
+
 # Generated 2D PDE datasets
 data2d/
 2d-pdes/data2d/
