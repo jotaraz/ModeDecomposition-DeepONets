@@ -182,7 +182,7 @@ for vtag in range(0,1):
                             dwllw = str(depth)+" "+str(width)+" "+str(int(llw))
                             tmp  = str(Nepochs)+" "+str(vtag)+" "+dwllw+" 0 "+batch_name+" "
                             tmp += str(lrstag)+" "+str(lr)+" "+str(decay)+" "+str(num_data)+" "
-                            tmp += str(which_T)+" "+str(dotruesigma)+" "+endtag+" "+sigmascale+" "+str(exp)+" "+str(doadam)+" "+str(dostacked)
+                            tmp += str(which_T)+" "+str(dotruesigma)+" "+endtag+" "+sigmascale+" "+str(exp)+" "+str(doadam)+" "+str(dostacked)+" 0 1"
                             os.system("python execute_don.py "+tmp)
                         
 
@@ -214,6 +214,6 @@ for vtag in range(0,1):
                             dwllw = str(depth)+" "+str(width)+" "+str(int(llw))
                             tmp  = str(Nepochs)+" "+str(vtag)+" "+dwllw+" 0 "+batch_name+" "
                             tmp += str(lrstag)+" "+str(lr)+" "+str(decay)+" "+str(num_data)+" "
-                            tmp += str(which_T)+" "+str(dotruesigma)+" "+endtag+" "+sigmascale+" "+str(exp)+" "+str(doadam)+" "+str(dostacked)
+                            tmp += str(which_T)+" "+str(dotruesigma)+" "+endtag+" "+sigmascale+" "+str(exp)+" "+str(doadam)+" "+str(dostacked)+" 0 1"
                             os.system("python execute_don.py "+tmp)
                         '''

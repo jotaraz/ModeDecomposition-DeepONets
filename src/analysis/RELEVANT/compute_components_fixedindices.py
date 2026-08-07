@@ -19,6 +19,10 @@ nepstr    = sys.argv[2] #"Nep" #usually Nep4000 (as of 19. sept) #sys.argv[2]
 optstr   = "SGD" #sys.argv[3]
 exponent = float(sys.argv[3])
 w        = sys.argv[4]
+## seed of the net to process, i.e. the "_v<vtag>" at the end of its directory name.
+## optional 5th argument; defaults to 0 so old invocations keep working.
+vtag     = int(sys.argv[5]) if len(sys.argv) > 5 else 0
+vstr     = "_v"+str(vtag)
 
 nets_dir = don_code.nets_dir
 
@@ -158,12 +162,12 @@ batch_name, endtag, _ = don_code.dic(bid)
 
 if do_exp_stuff:
     if exponent == 0.0 and (bid in [3, 5, 6]):
-        direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(w)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lrSGD32_v0"]
+        direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w"+str(w)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lrSGD32"+vstr]
 
     else:
-        direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp"+str(exponent)+"_Nep4000_d5_w"+str(w)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lrSGD32_v0"]
+        direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp"+str(exponent)+"_Nep4000_d5_w"+str(w)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lrSGD32"+vstr]
 else:
-    direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp"+str(exponent)+"_Nep"+nepstr+"_d5_w"+str(w)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lrSGD32_v0"]
+    direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp"+str(exponent)+"_Nep"+nepstr+"_d5_w"+str(w)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+"_numd1000_lrSGD32"+vstr]
 
 init_lr = 1e-4
 

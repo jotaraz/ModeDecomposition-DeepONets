@@ -157,7 +157,7 @@ def run(cfg):
     tmp  = str(cfg['Nepochs'])+" "+str(cfg['vtag'])+" "+dwllw+" 0 "+cfg['batch_name']+" "
     tmp += str(cfg['lrstag'])+" "+str(cfg['init_lr'])+" "+str(cfg['decay_rate'])+" "+str(cfg['num_data'])+" "
     tmp += str(cfg['which_T'])+" "+str(cfg['dotruesigma'])+" "+str(cfg['uendtag'])+" "+str(cfg['sigmascale'])+" "
-    tmp += str(cfg['exponent'])+" "+str(cfg['doadam'])+" "+str(cfg['dostacked'])
+    tmp += str(cfg['exponent'])+" "+str(cfg['doadam'])+" "+str(cfg['dostacked'])+" 0 1"
     os.system("python execute_don.py "+tmp)
 
 

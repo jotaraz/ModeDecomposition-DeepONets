@@ -10,6 +10,8 @@ Created on Thu Sep 25 17:39:05 2025
 
 from synthetic_gramschmidt import *
 
+import os
+
 
 n = 100
 m = 5000
@@ -28,9 +30,11 @@ sigmaexpss    = [-0.5, -0.5, -0.5, -0.5, -0.5, -0.5]
 norm0scales   = [ 0.2,  0.4,  1.0,  2.0,  0.2,  0.2]
 
 
-#path = r"C:\Users\J_Taraz\Documents\non_ULM\new2\data\synth"
-path = r"/home/johannes/Nextcloud/Documents/Uni/XI/MA/new2/data/synth"
+# write into the repo's dataset directory, i.e. the one don_code.load_dataset reads from
+data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "data", "datasets")
+os.makedirs(data_dir, exist_ok=True)
 
+path = os.path.join(data_dir, "synth")
 path += "v"+vtag
 path += f"_n{n}_N{N}_m{m}"
 

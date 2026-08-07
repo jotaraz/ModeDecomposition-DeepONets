@@ -53,8 +53,8 @@ sigmascale  = sys.argv[15] # this is the $factor$, from dotruesigma: if you want
 exponent    = float(sys.argv[16]) # the exponent from reweighting
 doadam      = bool(int(sys.argv[17])) # Adam or GD? (if you want AdaGrad set this to True as well, and set momentum=False)
 dostacked   = bool(int(sys.argv[18])) # stacked or unstacked network?
-adaptive_init_lr = False # if you use exponent != 0 and SGD, set this to True, otherwise dont
-momentum    = True # only set to False, for AdaGrad. Adam needs True, for (normal) GD it does not matter
+adaptive_init_lr = bool(int(sys.argv[19])) # rescale init_lr by sigma_1^(-2*exponent)? if you use exponent != 0 and SGD, set this to 1, otherwise 0. NOTE: with exponent != 0 this also renames "_exp" to "_expA" in the net directory
+momentum    = bool(int(sys.argv[20])) # only set to 0, for AdaGrad. Adam needs 1, for (normal) GD it does not matter
 
 transfinp   = False 
 alphaT      = 0.0 #float(sys.argv[8])

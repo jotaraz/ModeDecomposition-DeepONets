@@ -2,20 +2,31 @@
 ## current version:
 ### optstepsize = 1e-8
 ### stepsizetag = str(optstepsize)
-### bigname = "log_diagoffdiag_bigwu"+stepsizetag
+### bigname = "log_diagoffdiag_big"+stepsizetag
+##
+## This produces the log_diagoffdiag_big<stepsizetag>.txt that
+## show_components_mult_multsizes.py (fig. 9a) reads, for the whole width sweep at once.
+## Run as:  python -m src.analysis.RELEVANT.old-stuff.compute_components <bid> <Nep> <exponent> [vtag]
+## e.g. for fig. 9a:  python -m src.analysis.RELEVANT.old-stuff.compute_components 3 10000 0.0 0
+## vtag is the seed of the nets to process (default 0).
+## (the sibling script ../compute_components_fixedindices.py does the same for a single
+##  width and saves under log_diagoffdiag_new, which fig. 9b reads.)
 
-from ... import don_code
+from .... import don_code
 #import optax
-import sys 
+import sys
 
 #together = bool(int(sys.argv[1]))
-#bid       = int(sys.argv[1])
+bid       = int(sys.argv[1])
 dostacked = False #bool(int(sys.argv[1]))
-nepstr    = "Nep4000" #sys.argv[2]
-#w         = sys.argv[3]
+nepstr    = sys.argv[2] # number of epochs of the nets, as it appears after "Nep" in their name
 #num_vs    = int(sys.argv[4])
 optstr   = "SGD" #sys.argv[3]
-exponent = float(sys.argv[1])
+exponent = float(sys.argv[3])
+## seed of the nets to process, i.e. the "_v<vtag>" at the end of their directory names.
+## optional 4th argument; defaults to 0 so old invocations keep working.
+vtag     = int(sys.argv[4]) if len(sys.argv) > 4 else 0
+vstr     = "_v"+str(vtag)
 
 if dostacked:
     stacked_str = "doStackedTrue"
@@ -148,29 +159,44 @@ def get_dwllw(name):
 #direcs = sorted(don_code.os.listdir(don_code.nets_dir+""))
 ## only for debugging of the exp != 0 case
 
-if exponent == 0.0:
-    direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w237_llw50_batburgers_dt0.0001_nc10_m3800_999_numd1000_lrSGD32_v0"]
+batch_name, endtag, _ = dic(bid)
 
+## the width sweep of show_components_mult_multsizes.py, i.e. one net per curve of fig. 9a
+if bid < 2:
+    wun_s = [50, 100, 222, 332, 495]
+    llw   = 20
+elif bid < 6:
+    wun_s = [50, 100, 220, 335, 495]
+    llw   = 50
 else:
-    direcs = ["whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp-1.0_Nep4000_d5_w237_llw50_batburgers_dt0.0001_nc10_m3800_100_numd1000_lrSGD32_v0"]
+    wun_s = [50, 100, 237, 337, 494]
+    llw   = 50
+
+direcs = []
+for w in wun_s:
+    direcs.append("whichT0_doStacked"+str(dostacked)+"_doSigma1_sisc1.0_aT0.0_aB0.0_exp"+str(exponent)+
+                  "_Nep"+nepstr+"_d5_w"+str(w)+"_llw"+str(llw)+"_bat"+batch_name+"_"+endtag+
+                  "_numd1000_lr"+optstr+"32"+vstr)
 
 init_lr = 1e-4
 
-epochs = ["101", "201", "301"]
+#epochs = ["101", "201", "301"]
 
 #for i in range(0,50,1):
 #    epochs.append(str(10*i+1))
 
-#for i in range(0,40,1):
-#    epochs.append(str(100*i+1))
+## one row of the saved file per epoch below; 40 rows is what fig. 9a shows
+epochs = []
+for i in range(0,40,1):
+    epochs.append(str(100*i+1))
 
-lr_schedule = optax.exponential_decay(
+lr_schedule = don_code.optax.exponential_decay(
     init_value=init_lr,  
     transition_steps=500,  
     decay_rate=0.95,
     staircase=True  # Set to True if you want discrete decay steps
 )
-optimizer = optax.sgd(learning_rate=lr_schedule)
+optimizer = don_code.optax.sgd(learning_rate=lr_schedule)
 
 #d = 5
 #llw = 50
@@ -184,8 +210,8 @@ todo_counter = 0
 
 optstepsize = 1e-8
 stepsizetag = str(optstepsize)
-#bigname = "log_diagoffdiag_big"+stepsizetag
-bigname = "log_diagoffdiag_bigwu"+stepsizetag
+bigname = "log_diagoffdiag_big"+stepsizetag
+#bigname = "log_diagoffdiag_bigwu"+stepsizetag
 
 for jdd in range(len(direcs)):
     dir = direcs[jdd]
@@ -366,7 +392,7 @@ for jdd in range(len(direcs)):
                 for j in range(llw):
                     #grads_tr_norm[:,i] = 1e-5 * don_code.np.sqrt(norm2(flat_par_las)/norm2(grads_tr[:,i])) * grads_tr[:,i]
                     tmp_scale                = optstepsize * don_code.np.sqrt(norm2(flat_par_las)/norm2(grads_tr_rew[:,j]))
-                    params_tmp               = optax.apply_updates(par_las, don_code.jax.tree.map(lambda x: -tmp_scale*x, not_flattened[j]))
+                    params_tmp               = don_code.optax.apply_updates(par_las, don_code.jax.tree.map(lambda x: -tmp_scale*x, not_flattened[j]))
                     update_matrix_train[:,j] = don_code.Tall_loss_components(params_tmp, state_las, ptrain, T, VT_train, ScaledSigma)
                     update_matrix_test[:,j]  = don_code.Tall_loss_components(params_tmp, state_las, ptest, T, VT_test, ScaledSigma)
                 
@@ -511,7 +537,7 @@ for jdd in range(len(direcs)):
 
 
         print("saving data (", exponent, ")\n")
-        #don_code.np.savetxt(don_code.nets_dir+"/"+dir+"/"+bigname+".txt", diag_data)
+        don_code.np.savetxt(don_code.nets_dir+"/"+dir+"/"+bigname+".txt", diag_data)
 
         counter += 1
         #lossdata = don_code.np.loadtxt(don_code.nets_dir+"/"+dir+"/log.txt")

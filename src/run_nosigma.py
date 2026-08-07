@@ -100,6 +100,6 @@ def lrs(lrtag):
 dwllw = str(depth)+" "+str(width)+" "+str(int(llw))
 tmp  = str(Nepochs)+" "+str(vtag)+" "+dwllw+" 0 "+batch_name+" "
 tmp += str(lrstag)+" "+str(init_lr)+" "+str(decay_rate)+" "+str(num_data)+" "
-tmp += str(which_T)+" "+str(dotruesigma)+" "+uendtag+" "+sigmascale+" "+str(exponent)+" "+str(doadam)+" "+str(dostacked)
+tmp += str(which_T)+" "+str(dotruesigma)+" "+uendtag+" "+sigmascale+" "+str(exponent)+" "+str(doadam)+" "+str(dostacked)+" 0 1"
 os.system("python execute_don.py "+tmp)
                         
