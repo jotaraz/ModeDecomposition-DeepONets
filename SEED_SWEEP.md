@@ -3,9 +3,12 @@
 Every DeepONet the figures of arXiv:2602.21910 need — except the four Figure 6
 (synthv) nets — trained from ten seeds, `vtag = 0..9`.
 
-**89 configs × 10 seeds = 890 runs ≈ 137 CPU-hours**, packed into 30 HTCondor
-jobs of ~4.6 h each. Which nets, and where each comes from, is in
-`list_nets_seeds.txt`.
+**89 configs × 10 seeds = 890 runs**, packed into 30 HTCondor jobs. Which nets,
+and where each comes from, is in `list_nets_seeds.txt`.
+
+Estimated at 137 CPU-hours / ~4.6 h per job; it actually took **152 CPU-hours
+and 9.55 h wall clock** — see *Measured outcome* below, and read the calibration
+section knowing it under-modelled how much nodes differ.
 
 ## Running it
 
@@ -48,6 +51,11 @@ four decimals — so the linear `t = startup + Nep · c(w)` model itself is soun
 The two w495 runs landed on *different* nodes and implied 0.2046 vs 0.2722
 s/epoch. The slower figure is used. The w335 and stacked anchors are single
 runs and carry the same ±30%, so real job lengths may run up to a third over.
+
+**This turned out to be a large underestimate: the real spread is up to 4×.**
+Worse, the stacked anchor was measured on g158, which the run revealed to be the
+slowest node on the cluster, so that config was overestimated by ~1.7×. See
+*Measured outcome*.
 
 The stacked net is the outlier: it has essentially the same parameter count as
 w495 unstacked (1,205,450 vs 1,205,375 — the parameter-matching Fig. 8 claims)
@@ -97,6 +105,69 @@ The generator also asserts that the fig. 4 `exp0.0/Nep4000/w335/lrSGD32` net is
 never produced: with both it and the Nep10000 one present,
 `analyze_mode_losses_rotate.py` draws a sixth column.
 
+## Measured outcome (run of 2026-08-07, cluster 17443885)
+
+Ran 15:15:02 → 00:48:23, i.e. **9.55 h wall clock** against a predicted ~4.6 h.
+
+| | predicted | actual |
+|---|---|---|
+| total | 137 CPU-h | **152 CPU-h** (+12%) |
+| job wall time | 4.54–4.56 h | **3.25 / 5.01 / 9.55 h** (min/median/max) |
+| checkpoints | ~420 GB | **+349 GB** (461 → 810 GB) |
+
+Correctness was clean: `TRAIN=889 DONE=889 SKIP=1 FAIL=0 RENAME=40 REPAIR=0`,
+30/30 jobs finished, 0 evicted. All 890 directories were verified independently
+of the logs to exist and carry their final checkpoint. `RENAME=40` is exactly the
+four fig. 4 configs × 10 seeds, with no `_expA` left over and no instance of the
+forbidden fig. 4 net. `REPAIR=0` — nothing was preempted, so the guard never had
+to fire.
+
+**The one problem was scheduling, and it was the cost model's fault, not the
+packer's.** Aggregate cost was fine (+12%); the *distribution* was not. Nodes
+differ by up to 4× on identical work:
+
+| config | fastest (g203) | slowest (g158) | ratio |
+|---|---|---|---|
+| Nep5000 w100 | 240 s | 1007 s | **4.2×** |
+| Nep10000 w100 | 503 s | 1642 s | 3.3× |
+| Nep4000 w335 | 617 s | 1400 s | 2.3× |
+| Nep10000 stacked | 3516 s | 8194 s | 2.3× |
+
+Two compounding errors. The stacked anchor came from g158 — the slowest node —
+so that config was predicted at 8600 s against an actual median of 4979 s.
+And LPT balanced *predicted* load perfectly, but predicted load is not actual
+load when nodes vary 4×. Job 5 drew both a stacked run and g158 and became a
+9.55 h straggler that alone set the wall clock, while job 3 finished in 3.25 h
+and left its slot idle for six hours.
+
+## What to change next time: pull, don't push
+
+Static bin-packing commits each job to a fixed list up front, so one unlucky
+pairing sets the wall clock. Replace it with **one shared queue that workers pull
+from**: a fast node then takes more items and a slow node fewer, nobody idles
+while work remains, and **no cost model is needed at all**.
+
+Claim items with `mkdir`, which is atomic on Lustre — not a lockfile, because
+`/fast` does not support file locking:
+
+```bash
+[[ -f "${NETS}/${EXPECTED}/${FINAL_CHP}" ]] && continue    # already done
+mkdir "${CLAIMS}/${EXPECTED}" 2>/dev/null || continue      # someone else has it
+train...
+```
+
+Order the shared list longest-first anyway (dynamic assignment + LPT ordering is
+the classic near-optimal pairing) so the 2.3 h stacked runs are not picked up
+last. Crash recovery already works: a dead worker leaves a stale claim and a
+partial directory, and the completeness guard deletes and retrains anything
+without its final checkpoint — so resubmitting still fixes everything, you just
+clear the claims directory first. On this sweep it would plausibly have cut
+9.55 h to roughly 4–4.5 h.
+
+**Only worth it when runs greatly outnumber slots**, i.e. a re-run of the full
+890 or a larger seed set. For the 30 fig. 9 post-processing runs the right layout
+is simply one run per job, where balance is a non-issue.
+
 ## Not included
 
 - **Figure 9 post-processing.** `log_diagoffdiag*.txt` is not written by
@@ -104,7 +175,8 @@ never produced: with both it and the Nep10000 one present,
   `old-stuff/compute_components.py` (fig. 9a), both of which now take the seed
   as a trailing argument. 10 + 20 runs, each ~4000 jitted gradient evaluations,
   not yet calibrated — give them 16 GB (the `(num_pars × llw)` gradient matrix
-  alone is 482 MB at w495, held twice).
+  alone is 482 MB at w495, held twice). 30 runs against 30 slots, so submit them
+  one run per job and ignore the packing question entirely.
 - **Storage**: ~420 GB of checkpoints. `/fast` had 219 TB free.
 - **The analysis and plotting scripts still hardcode `_v0`** and must be adapted
   before any seed-averaged figure can be produced.
