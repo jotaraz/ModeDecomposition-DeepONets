@@ -79,6 +79,35 @@ llw = 5
 
 sharedbase = "whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep"
 
+# ---------------------------------------------------------------------------
+# ADAPTED 2026-08-09 (by Claude, at the author's request) to read the RETRAINED
+# nets instead of the published ones.
+#
+# Originally this figure read four net directories named ..._batsynthv<id>_...
+# with <id> = trunc/flip from sigmascale_to_vid above (14/15 and 18/19).  Those
+# datasets were never published and no longer exist, so the four nets could not
+# be retrained.  They were regenerated with run_synthetic_data_gen.py as a
+# single family, synthv09082026_n100_N5_m5000, and retrained at vtag=0
+# (condor/fig6.sub).  Two consequences for the directory names:
+#
+#   * all four nets now share ONE dataset name and are told apart only by their
+#     uendtag, so there is no synthv<id> to look up any more;
+#   * the decreasing-frequency net carries the TRUE sign of the frequency
+#     increment, fs-<alpha>, whereas the published synthv15/synthv19 names
+#     carried fs<alpha> (positive) and encoded the flip in the <id> instead.
+#
+# sigmascale_to_vid is kept above: "Nep" is still read from it, and the id
+# columns document how the published nets were named.
+# ---------------------------------------------------------------------------
+dataset = "synthv09082026_n100_N5_m5000"
+
+def netdir(nepochs, fs, sigmascale):
+    """Net directory for the retrained Fig. 6 nets; fs is signed (+alpha /
+    -alpha for increasing / decreasing frequencies)."""
+    return (sharedbase + str(nepochs) + "_" + dw + "_llw5_bat" + dataset
+            + "_fs" + str(fs) + sigmascale + "ns" + str(F0)
+            + "_numd5000_lrAdam40_v0")
+
 #fig, axs = plt.subplots(2, 1+2, figsize=(6,4))
 
 fig = plt.figure(figsize=(6, 4))
@@ -109,14 +138,15 @@ for irow, sigmascale_num in enumerate([-0.01, -0.5]):
 
     sigmascale = "ss"+str(sigmascale_num)
 
-    truncated_id = sigmascale_to_vid[sigmascale]["trunc"]
-    flipped_id   = sigmascale_to_vid[sigmascale]["flip"]
     nepochs      = sigmascale_to_vid[sigmascale]["Nep"]
 
-    direcs.append(sharedbase+str(nepochs)+"_"+dw+"_llw5_batsynthv"+str(truncated_id)+"_n100_N5_m5000_fs"+str(alpha)+sigmascale+"ns"+str(F0)+"_numd5000_lrAdam40_v0")
+    # ADAPTED 2026-08-09: was batsynthv<trunc_id>/<flip_id> with a positive fs
+    # for both; the retrained nets share one dataset and differ in the sign of
+    # fs. See the netdir() comment above.
+    direcs.append(netdir(nepochs, +alpha, sigmascale))
     labels.append(r"increasing freq., $\alpha="+str(alpha)+r"$")
 
-    direcs.append(sharedbase+str(nepochs)+"_"+dw+"_llw5_batsynthv"+str(flipped_id)+"_n100_N5_m5000_fs"+str(alpha)+sigmascale+"ns"+str(F0)+"_numd5000_lrAdam40_v0")
+    direcs.append(netdir(nepochs, -alpha, sigmascale))
     labels.append(r"decreasing freq., $\alpha=-"+str(alpha)+r"$")
 
 

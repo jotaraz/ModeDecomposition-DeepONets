@@ -316,7 +316,8 @@ for direc in direcs:
 
                     ## weighted
                     ytmp = ss_train[:llw]**2 * mode_losses[epoch, :]*tmp_mode_losses[key]["sf"] #/mtrain
-                    multiseed.band(axs[ik], shifted_xax,
+                    # weighted panels are axs[2+ik] (C/D), not axs[ik] (A/B)
+                    multiseed.band(axs[2+ik], shifted_xax,
                                    ss_train[:llw]**2 * _blo[epoch, :]*tmp_mode_losses[key]["sf"],
                                    ss_train[:llw]**2 * _bhi[epoch, :]*tmp_mode_losses[key]["sf"],
                                    base_col * (0.2+0.7*epoch/max_epoch))
