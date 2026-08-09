@@ -614,7 +614,8 @@ if fixed_num_epochs != 80:
     name += "_neAll"+str(fixed_num_epochs)
 
 path = don_code.figures_dir + "/"
-tmp = "Fig8_multiseed" + multiseed.suffix()
+# panel letter goes before the suffix -> Fig8b_multiseed[_band]
+_fig8 = lambda panel: "Fig8" + panel + "_multiseed" + multiseed.suffix()
 
 # -------------------------------------------------------------------------
 # Save figure 1 (loss curves)
@@ -623,8 +624,8 @@ if whichones == 0:
     fig1.subplots_adjust(bottom=0.25, top=0.97, right=0.97, left=0.23)
 else:
     fig1.subplots_adjust(bottom=0.25, top=0.97, right=0.98, left=0.15)
-fig1.savefig(path+"/pdfs/"+tmp+"b.pdf")
-fig1.savefig(path+"/pngs/"+tmp+"b.png")
+fig1.savefig(path+"/pdfs/"+_fig8("b")+".pdf")
+fig1.savefig(path+"/pngs/"+_fig8("b")+".png")
 
 
 # -------------------------------------------------------------------------
@@ -635,8 +636,8 @@ if whichones == 0:
 else:
     fig2.subplots_adjust(bottom=0.14, top=0.99, right=0.98, wspace=0.0, hspace=0.0, left=0.15)
 
-fig2.savefig(path+"/pdfs/"+tmp+"c.pdf")
-fig2.savefig(path+"/pngs/"+tmp+"c.png")
+fig2.savefig(path+"/pdfs/"+_fig8("c")+".pdf")
+fig2.savefig(path+"/pngs/"+_fig8("c")+".png")
 
 
 # -------------------------------------------------------------------------
