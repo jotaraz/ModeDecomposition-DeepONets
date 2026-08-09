@@ -303,7 +303,7 @@ for dir in direcs:
                 label = "initial"
             elif epoch == plot_epoch_ids[-1]:
                 label = "final"
-            multiseed.band(axs[0,k], np.arange(llw),
+            multiseed.band(axs[0,k], don_code.np.arange(llw),
                            ss_train[:llw]**2*_tr_lo[epoch,:] / m_train,
                            ss_train[:llw]**2*_tr_hi[epoch,:] / m_train,
                            (0.2+0.7*epoch/max(plot_epoch_ids), 0, 0))
