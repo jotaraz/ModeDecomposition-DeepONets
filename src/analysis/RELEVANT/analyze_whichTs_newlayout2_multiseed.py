@@ -333,6 +333,7 @@ def plot_multLLW(showlast=True):
         if means is None:
             continue
         n_seeds_used.append(nseed)
+        print("multiseed: %s -> mean over %d seeds" % (name, nseed))
         grand_dict[whT][llw] = (means["etr"], means["ete"],
                                 means["proj_tr"], means["proj_te"])
         band_dict[whT][llw] = (los["ete"], his["ete"],
