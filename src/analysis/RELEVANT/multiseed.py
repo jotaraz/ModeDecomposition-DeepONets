@@ -31,7 +31,7 @@ SHOW_BAND = os.environ.get("MULTISEED_BAND", "") not in ("", "0", "false")
 # "minmax" -> elementwise min..max across seeds
 BAND_MODE = os.environ.get("MULTISEED_BAND_MODE", "std")
 
-BAND_ALPHA = 0.18
+BAND_ALPHA = 0.35
 
 # On log-scaled axes mean-std can fall at or below zero, which fill_between
 # cannot draw.  Where that happens the lower edge is clipped to this fraction of
@@ -159,12 +159,27 @@ def load_mean(name, filename, transform=None, seeds=SEEDS):
 
 
 def band(ax, x, lo, hi, color, show=None, alpha=BAND_ALPHA):
-    """Shade lo..hi behind a mean line, if the script's SHOW_BAND is on."""
+    """Shade lo..hi behind a mean line, if the script's SHOW_BAND is on.
+
+    A thin edge is drawn as well: on panels spanning several decades the fill
+    alone is only a few pixels tall and effectively invisible.
+    """
     if show is None:
         show = SHOW_BAND
     if not show or lo is None or hi is None:
         return
     ax.fill_between(x, lo, hi, color=color, alpha=alpha, linewidth=0, zorder=0)
+    ax.plot(x, lo, '-', color=color, alpha=min(1.0, alpha * 2), linewidth=0.4, zorder=0)
+    ax.plot(x, hi, '-', color=color, alpha=min(1.0, alpha * 2), linewidth=0.4, zorder=0)
+
+
+def is_endpoint_stage(epoch, stages):
+    """True for the first/last plotted training stage.
+
+    The stage-ramp panels draw ~8 curves in a colour ramp; banding every one
+    turns into an opaque wash, so those scripts band only the endpoints.
+    """
+    return epoch == min(stages) or epoch == max(stages)
 
 
 def note(fig, n_used, seeds=SEEDS):

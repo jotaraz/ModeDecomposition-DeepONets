@@ -17,7 +17,7 @@ which_T     = 0
 dotruesigma = 0
 uendtag     = '1999'
 sigmascale  = 'First'
-exponent    = 1.0
+exponent    = 0.0
 doadam      = 1
 dostacked   = 0 
 

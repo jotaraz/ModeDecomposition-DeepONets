@@ -18,7 +18,7 @@ SVD_cfg = {
     'dotruesigma': 1,
     'uendtag'    : '1999',
     'sigmascale' : 1.0,
-    'exponent'   : 1.0,
+    'exponent'   : 0.0,
     'doadam'     : 1,
     'dostacked'  : 0,
 }
@@ -39,7 +39,7 @@ NormalDON_cfg = {
     'dotruesigma': 0,
     'uendtag'    : '1999',
     'sigmascale' : 'First',
-    'exponent'   : 1.0,
+    'exponent'   : 0.0,
     'doadam'     : 1,
     'dostacked'  : 0,
 }
@@ -70,7 +70,7 @@ def generate_cfg(N, d, w, batch_name='kdvnx401_dt0.0001_nc5_m5000', uendtag='199
         'dotruesigma': dotruesigma,
         'uendtag'    : uendtag,
         'sigmascale' : sigmascale,
-        'exponent'   : 1.0,
+        'exponent'   : 0.0,
         'doadam'     : 1,
         'dostacked'  : 0,
     }
