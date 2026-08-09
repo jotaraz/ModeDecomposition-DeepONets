@@ -1,4 +1,15 @@
 ## Script to compute gradient components and Taylor approximations for trained SVDONets (saves under bigname)
+##
+## NOT THE FIGURE 9 PATH -- do not use it for that.  It writes 11+2*llw+4*llw^2
+## = 10111 columns (llw=50), which matches neither the published files nor the
+## readers.  The published log_diagoffdiag_big1e-08.txt files are 40x5111 and are
+## byte-identical to log_diagoffdiag_new.txt, i.e. they are COPIES of the output
+## of ../compute_components_fixedindices.py (which allocates 11+2*llw+2*llw^2),
+## renamed so show_components_mult_multsizes.py can find them.  Use that script
+## plus a cp; see condor/components_one.sh and SEED_SWEEP.md.
+## (The import/optax/argument fixes below are kept so the script is at least
+##  runnable, but nothing in the paper depends on it.)
+##
 ## current version:
 ### optstepsize = 1e-8
 ### stepsizetag = str(optstepsize)

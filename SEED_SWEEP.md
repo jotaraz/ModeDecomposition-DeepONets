@@ -170,13 +170,46 @@ is simply one run per job, where balance is a non-issue.
 
 ## Not included
 
-- **Figure 9 post-processing.** `log_diagoffdiag*.txt` is not written by
-  training; it comes from `compute_components_fixedindices.py` (fig. 9b) and
-  `old-stuff/compute_components.py` (fig. 9a), both of which now take the seed
-  as a trailing argument. 10 + 20 runs, each ~4000 jitted gradient evaluations,
-  not yet calibrated — give them 16 GB (the `(num_pars × llw)` gradient matrix
-  alone is 482 MB at w495, held twice). 30 runs against 30 slots, so submit them
-  one run per job and ignore the packing question entirely.
+- **Figure 9 post-processing** — now specified, see below.
 - **Storage**: ~420 GB of checkpoints. `/fast` had 219 TB free.
 - **The analysis and plotting scripts still hardcode `_v0`** and must be adapted
   before any seed-averaged figure can be produced.
+
+## Figure 9 post-processing
+
+`log_diagoffdiag*.txt` is not written by training. Exactly **one** script computes
+it — `src/analysis/RELEVANT/compute_components_fixedindices.py`, which takes
+`bid nepstr exponent w [vtag]` and writes `log_diagoffdiag_new.txt`, 40 × 5111
+(`11 + 2·llw + 2·llw²`).
+
+`show_components_2x2.py` (fig. 9b) reads that file directly.
+`show_components_mult_multsizes.py` (fig. 9a) looks for
+`log_diagoffdiag_big1e-08.txt` instead — and on HuggingFace those two files are
+**byte-identical**, i.e. the published `_big1e-08` is a *copy* of `_new`, not a
+separate computation. `condor/components_one.sh` therefore computes once and
+copies.
+
+**`old-stuff/compute_components.py` is not the fig. 9 path.** It allocates
+`11 + 2·llw + 4·llw²` = 10111 columns, matching neither the published files nor
+the readers. (One published file, w220's, is a third format again — 10109 =
+`9 + 2·llw + 4·llw²` — a leftover of an older code state. Fig. 9a only reads
+columns 0–8, which all three formats share, which is why the inconsistency never
+showed.) It has been annotated in place rather than used.
+
+**The jobs.** 5 widths × 10 seeds = **50, one net per job**:
+
+```
+condor_submit_bid 100 condor/components.sub     # args: 3 10000 0.0 <w> <v>
+```
+
+w ∈ {50, 100, 220, 335, 495}, all Nep10000, KdV τ=0.2, `lrSGD32`. Measured at
+267 s / net on 4 CPUs with 16 GB (no OOM), so ~3.7 CPU-hours total. Idempotent:
+`fixedindices` skips any net that already has `log_diagoffdiag_new.txt`.
+
+**Fig. 9b needs no extra net.** It used to take w50 at Nep4000, the only net not
+shared with fig. 9a. `show_components_2x2.py` plots `plot_epoch_ids = [1, 11, …,
+71]` and caps `lossdata` at 80 rows, while `bigdata` is always the 40 rows at
+epochs 1…3901 — so it never reads past ~epoch 3550. Since the LR schedule is
+epoch-indexed, a Nep10000 run's first 4000 epochs are the same trajectory as a
+Nep4000 run. So `produce_all_figures.py` now passes `neptag1 = 10000`, reusing
+fig. 9a's w50 net: one argument changed, no script edited, figure unchanged.

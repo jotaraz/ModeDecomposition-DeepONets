@@ -412,37 +412,33 @@ Update-based coupling for DeepONets of different hidden-layer widths.
 All KdV tau=0.2, GD, alpha_1=1e-4, depth 5, N=50, doSigma1/sisc1.0.
 
 *** Figure 9 is the ONLY figure that needs a POST-TRAINING step - training alone is not
-*** enough.  Both show_components_* scripts read a coupling-matrix file
-***   nets_dir/<net>/<bigname>.txt
-*** which all_mult_updates() never writes (training only emits log.txt, log_modes.txt and
-*** the *_chp checkpoints).  It has to be computed afterwards, per net:
+*** enough.  Both show_components_* scripts read a coupling-matrix file from the net
+*** directory, which all_mult_updates() never writes (training only emits log.txt,
+*** log_modes.txt and the *_chp checkpoints).
 ***
-***   Fig. 9b needs  log_diagoffdiag_new.txt      (show_components_2x2.py, bigname line 126)
-***      -> written by src/analysis/RELEVANT/compute_components_fixedindices.py, which sets
-***         the same bigname (line 197) and saves it (line 510).  Runnable as-is; one net
-***         per call, arguments  bid nepstr exponent w [vtag]  where nepstr is the epoch
-***         count WITHOUT the "Nep" prefix (the script builds "_Nep"+nepstr) and vtag is the
-***         seed (optional, default 0):
-***           python -m src.analysis.RELEVANT.compute_components_fixedindices 3 4000  0.0 50  <v>
-***           python -m src.analysis.RELEVANT.compute_components_fixedindices 3 10000 0.0 335 <v>
+*** Exactly ONE script computes it:
+***   src/analysis/RELEVANT/compute_components_fixedindices.py
+***     arguments  bid nepstr exponent w [vtag]   (nepstr WITHOUT the "Nep" prefix;
+***     vtag optional, default 0), one net per call, e.g.
+***       python -m src.analysis.RELEVANT.compute_components_fixedindices 3 10000 0.0 335 <v>
+***     It writes log_diagoffdiag_new.txt, 40 x 5111 = 11 + 2*llw + 2*llw^2.
 ***
-***   Fig. 9a needs  log_diagoffdiag_big1e-08.txt (show_components_mult_multsizes.py:137,
-***         chosen because neptag != "500")
-***      -> written by src/analysis/RELEVANT/old-stuff/compute_components.py.  That script
-***         was dead - wrong relative-import depth, bare `optax`, a hardcoded single
-***         debugging net, only 3 epochs, the matching bigname commented out in favour of
-***         "_bigwu", and its savetxt commented out.  All of that is FIXED; it now takes
-***           bid nepstr exponent [vtag]        (vtag optional, default 0)
-***         and does the whole width sweep (one net per curve of the panel) in one call:
-***           python -m src.analysis.RELEVANT.old-stuff.compute_components 3 10000 0.0 <v>
-***         optstepsize = 1e-8 gives the "1e-08" in the file name (str(1e-8) == "1e-08").
-***         CAVEAT: the previously active name was "_bigwu"+stepsizetag, and only the
-***         string differed in the committed code - so it is not certain the published
-***         _big1e-08 files were produced by exactly this code path.  Compare a freshly
-***         computed file against the one on HuggingFace before trusting it.
+***   fig. 9b (show_components_2x2.py) reads that file directly.
+***   fig. 9a (show_components_mult_multsizes.py) looks for log_diagoffdiag_big1e-08.txt
+***     instead - and on HuggingFace those two files are BYTE-IDENTICAL.  The published
+***     _big1e-08 is a COPY of _new, not a separate computation, so just copy it.
 ***
-*** Both files ARE shipped inside the HuggingFace net directories (verified present), so
-*** pulling the nets skips this entirely.  It only matters when retraining from scratch.
+*** old-stuff/compute_components.py is NOT this path: it emits 11+2*llw+4*llw^2 = 10111
+*** columns, matching neither the published files nor the readers.  (w220's published
+*** _big1e-08 is a third format again, 10109 = 9+2*llw+4*llw^2, from an older code state.
+*** fig. 9a only reads columns 0-8, which all three share, so the inconsistency never
+*** showed.)  Do not use it.
+***
+*** All of this is automated in condor/components_one.sh + condor/components.sub:
+*** 5 widths x 10 seeds = 50 jobs, one net each, ~267 s and 16 GB per net.
+***
+*** The published files ARE shipped inside the HuggingFace net directories, so pulling
+*** the nets skips this entirely.  It only matters when retraining from scratch.
 
 --- Figure 9a ---
 size_id = -1 -> the full width sweep w in {50, 100, 220, 335, 495} (the legend of the panel).
@@ -452,7 +448,7 @@ are the Nep10000 ones.
 creation (execute_don.py arguments):
   10000 0 5 <w> 50 0 kdvnx401_dt0.0001_nc5_m5000 32 1e-4 0.95 1000 0 1 1999 1.0 0.0 0 0 0 1
     <w> in {50, 100, 220, 335, 495}
-  then, per net, the post-training step above (log_diagoffdiag_big1e-08.txt)
+  then, per net, compute_components_fixedindices + the _new -> _big1e-08 copy (above)
 
 nets (5):
   whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep10000_d5_w50_llw50_batkdvnx401_dt0.0001_nc5_m5000_1999_numd1000_lrSGD32_v0
@@ -472,8 +468,9 @@ net is additional.
 creation (execute_don.py arguments):
   4000  0 5 50  50 0 kdvnx401_dt0.0001_nc5_m5000 32 1e-4 0.95 1000 0 1 1999 1.0 0.0 0 0 0 1
   10000 0 5 335 50 0 kdvnx401_dt0.0001_nc5_m5000 32 1e-4 0.95 1000 0 1 1999 1.0 0.0 0 0 0 1
-  then, per net, the post-training step noted under Fig. 9a (log_diagoffdiag_new.txt,
-  i.e. compute_components_fixedindices 3 4000 0.0 50 <v>  and  3 10000 0.0 335 <v>)
+  NOTE: the w=50 / Nep4000 net is no longer needed.  produce_all_figures.py now passes
+  neptag1=10000 for fig. 9b, reusing fig. 9a's w=50 / Nep10000 net - the plot never reads
+  past ~epoch 3550 and the lr schedule is epoch-indexed, so the figure is unchanged.
 
 nets (2):
   whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w50_llw50_batkdvnx401_dt0.0001_nc5_m5000_1999_numd1000_lrSGD32_v0

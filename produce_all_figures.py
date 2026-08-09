@@ -11,7 +11,7 @@ commands = {
     "7": "python -m src.analysis.RELEVANT.investigate_branch_sb_scale2 2 1",
     "8": "python -m src.analysis.RELEVANT.analyze_mode_losses_rotate2 3 0 2 32",
     "9a": "python -m src.analysis.RELEVANT.show_components_mult_multsizes 3 -1 4000 1",
-    "9b": "python -m src.analysis.RELEVANT.show_components_2x2 3 0 3 4000 10000",
+    "9b": "python -m src.analysis.RELEVANT.show_components_2x2 3 0 3 10000 10000",  # neptag1 10000, not 4000: reuses fig 9a's w50 net, see SEED_SWEEP.md
     "10": "python -m src.analysis.RELEVANT.analyze_mode_losses_rotate 3 5 1 32",
     "11": "python -m src.analysis.RELEVANT.analyze_mode_losses_rotate 3 11 2 32",
     "12": "python src/analysis/RELEVANT/synth_freq_comp_fromFILES.py"
