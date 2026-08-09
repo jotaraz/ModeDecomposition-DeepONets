@@ -45,8 +45,9 @@ nets_dir = don_code.nets_dir
 ## Set SHOW_BAND = True to shade the min..max spread across seeds.
 ## ---------------------------------------------------------------------------
 from . import multiseed
-SHOW_BAND = False
-multiseed.SHOW_BAND = SHOW_BAND
+# Bands are driven by the MULTISEED_BAND env var (see multiseed.py); set this to
+# True to force them on for this script alone.
+SHOW_BAND = multiseed.SHOW_BAND
 
 
 
@@ -161,6 +162,8 @@ else:
 
 offdiags_x = []
 offdiags_y = []
+offdiags_ylo = []
+offdiags_yhi = []
 offdiags_label = []
 
 min_loss_red = 1
@@ -220,6 +223,9 @@ for dir in direcs:
                 max_loss_red = max(max_loss_red, np.max(-tr_taylorgrad[1:]))
                 offdiags_x.append(-tr_taylorgrad[1:])
                 offdiags_y.append(tr_offdiags[1:])
+                # across-seed band on the y quantity (columns 2 and 3 of bigdata)
+                offdiags_ylo.append(big_lo[1:, 2])
+                offdiags_yhi.append(big_hi[1:, 2])
                 offdiags_label.append(dir.split("Nep")[1].split("bat")[0].split("_")[2])
 
         k += 1
@@ -255,6 +261,9 @@ if offdiagplot:
     #axs3.plot(xax, -0.1 + 0*xax, '--', color="k", alpha=0.5)
     for i in range(len(offdiags_y)):
         print("offdiag", i)
+        multiseed.band(axs3, offdiags_x[i][1:],
+                       offdiags_ylo[i][1:] / offdiags_x[i][1:],
+                       offdiags_yhi[i][1:] / offdiags_x[i][1:], colors[i])
         axs3.plot(offdiags_x[i][1:], offdiags_y[i][1:] / offdiags_x[i][1:], '.-', label=r"$w="+offdiags_label[i][1:]+"$", color=colors[i])
         ymin = min(ymin, np.min(offdiags_y[i][1:] / offdiags_x[i][1:]))
         ymax = max(ymax, np.max(offdiags_y[i][1:] / offdiags_x[i][1:]))
@@ -305,7 +314,7 @@ if offdiagplot:
     '''
     
     path = don_code.figures_dir
-    tmp = "Fig9a_multiseed"
+    tmp = "Fig9a_multiseed" + multiseed.suffix()
     fig3.savefig(path+"/pdfs/"+tmp+".pdf")
     fig3.savefig(path+"/pngs/"+tmp+".png")
 

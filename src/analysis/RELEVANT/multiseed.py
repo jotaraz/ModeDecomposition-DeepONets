@@ -22,12 +22,40 @@ np = don_code.np
 
 SEEDS = list(range(10))
 
-# Every *_multiseed script exposes its own SHOW_BAND; this is the default.
-# When True, the scripts additionally shade min..max across seeds behind the
-# mean line.  The band is always computed, so switching it on costs nothing.
-SHOW_BAND = False
+# Band drawing is driven by the environment so one set of scripts produces both
+# output sets:  MULTISEED_BAND=1 python produce_all_figures_multiseed.py
+# Each script also exposes SHOW_BAND at the top, which the env var overrides.
+SHOW_BAND = os.environ.get("MULTISEED_BAND", "") not in ("", "0", "false")
+
+# "std"    -> mean -/+ 1 standard deviation across seeds  (what the band set uses)
+# "minmax" -> elementwise min..max across seeds
+BAND_MODE = os.environ.get("MULTISEED_BAND_MODE", "std")
 
 BAND_ALPHA = 0.18
+
+# On log-scaled axes mean-std can fall at or below zero, which fill_between
+# cannot draw.  Where that happens the lower edge is clipped to this fraction of
+# the mean, so the band is TRUNCATED AT THE BOTTOM rather than dropped -- keep it
+# in mind when reading any panel whose band reaches this floor.
+BAND_FLOOR_FRAC = 1e-2
+
+
+def suffix():
+    """'_band' when bands are on, so the two output sets never collide."""
+    return "_band" if SHOW_BAND else ""
+
+
+def _spread(A):
+    """(lo, hi) across the seed axis, per BAND_MODE."""
+    m = A.mean(axis=0)
+    if BAND_MODE == "minmax":
+        return A.min(axis=0), A.max(axis=0)
+    sd = A.std(axis=0)
+    lo, hi = m - sd, m + sd
+    # keep the lower edge positive so log axes can render it
+    floor = np.abs(m) * BAND_FLOOR_FRAC
+    lo = np.where(lo > 0, lo, floor)
+    return lo, hi
 
 
 def seed_names(name, seeds=SEEDS):
@@ -60,7 +88,7 @@ def mean_over_seeds(fn, name, seeds=SEEDS):
 
     fn should return an array (or None / raise, if that seed is unusable).
     Returns (mean, lo, hi, n_used); (None, None, None, 0) if no seed worked.
-    lo/hi are the elementwise min/max across seeds, for SHOW_BAND.
+    lo/hi delimit the band (mean -/+ 1 std by default; see BAND_MODE).
     """
     vals = []
     for nm in seed_names(name, seeds):
@@ -78,7 +106,8 @@ def mean_over_seeds(fn, name, seeds=SEEDS):
         return None, None, None, 0
 
     A = _stack(vals)
-    return A.mean(axis=0), A.min(axis=0), A.max(axis=0), len(vals)
+    lo, hi = _spread(A)
+    return A.mean(axis=0), lo, hi, len(vals)
 
 
 def mean_of_keys(fn, name, keys, seeds=SEEDS):
@@ -107,7 +136,8 @@ def mean_of_keys(fn, name, keys, seeds=SEEDS):
     means, los, his = {}, {}, {}
     for k in keys:
         A = _stack(per_key[k])
-        means[k], los[k], his[k] = A.mean(axis=0), A.min(axis=0), A.max(axis=0)
+        means[k] = A.mean(axis=0)
+        los[k], his[k] = _spread(A)
     return means, los, his, n
 
 

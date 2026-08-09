@@ -17,8 +17,9 @@ nets_dir = don_code.nets_dir
 ## min..max spread across seeds behind each mean line.
 ## ---------------------------------------------------------------------------
 from . import multiseed
-SHOW_BAND = False
-multiseed.SHOW_BAND = SHOW_BAND
+# Bands are driven by the MULTISEED_BAND env var (see multiseed.py); set this to
+# True to force them on for this script alone.
+SHOW_BAND = multiseed.SHOW_BAND
 
 
 
@@ -451,7 +452,7 @@ axs[1].set_yscale("log")
 fig.subplots_adjust(wspace=0.0, hspace=0.0, right=0.95, left=0.13, top=0.95, bottom=0.13)
 
 path = don_code.figures_dir
-tmp = "Fig2_multiseed"
+tmp = "Fig2_multiseed" + multiseed.suffix()
 fig.savefig(path+"/pdfs/"+tmp+".pdf")
 fig.savefig(path+"/pngs/"+tmp+".png")
 

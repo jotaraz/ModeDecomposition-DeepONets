@@ -56,8 +56,9 @@ nets_dir = don_code.nets_dir
 ## Set SHOW_BAND = True to shade the min..max spread across seeds.
 ## ---------------------------------------------------------------------------
 from . import multiseed
-SHOW_BAND = False
-multiseed.SHOW_BAND = SHOW_BAND
+# Bands are driven by the MULTISEED_BAND env var (see multiseed.py); set this to
+# True to force them on for this script alone.
+SHOW_BAND = multiseed.SHOW_BAND
 
 
 
@@ -208,13 +209,20 @@ for ib, bid in enumerate(bids):
                 print("multiseed: %s -> mean over %d seeds" % (direc, nseed))
                 train_modes = modeloss_data[:,1      :1+  llw]
                 test_modes  = modeloss_data[:,1+2*llw:1+3*llw]
+                _tr_lo = ml_lo[:,1      :1+  llw]; _tr_hi = ml_hi[:,1      :1+  llw]
+                _te_lo = ml_lo[:,1+2*llw:1+3*llw]; _te_hi = ml_hi[:,1+2*llw:1+3*llw]
 
 
                 #axs_tmp[ib].plot(np.ones(llw), '--', color="k")
                 #axs_tmp[ib].plot(0.1*np.ones(llw), '--', color="k")
                 tr = train_modes[num_epochs-1,:]
+                multiseed.band(axs_tmp[ib], np.arange(len(tr)),
+                               _tr_lo[num_epochs-1,:], _tr_hi[num_epochs-1,:], colors_tr[k])
                 axs_tmp[ib].plot(tr, color=colors_tr[k])
                 te = test_modes[num_epochs-1,:]/m_test*m_train
+                multiseed.band(axs_tmp[ib], np.arange(len(te)),
+                               _te_lo[num_epochs-1,:]/m_test*m_train,
+                               _te_hi[num_epochs-1,:]/m_test*m_train, colors_te[k])
                 axs_tmp[ib].plot(te, color=colors_te[k])
 
 
@@ -315,7 +323,7 @@ fig2.subplots_adjust(wspace=0.01, hspace=0.01, left=0.1, right=0.9, bottom=0.16,
 #fig2.savefig(name+".pdf")
 
 path = don_code.figures_dir
-tmp = "Fig7_multiseed"
+tmp = "Fig7_multiseed" + multiseed.suffix()
 fig2.savefig(path+"/pdfs/"+tmp+".pdf")
 fig2.savefig(path+"/pngs/"+tmp+".png")
 

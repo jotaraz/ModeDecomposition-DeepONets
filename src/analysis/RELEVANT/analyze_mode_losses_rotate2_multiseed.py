@@ -59,8 +59,9 @@ nets_dir = don_code.nets_dir
 ## Set SHOW_BAND = True to shade the min..max spread across seeds.
 ## ---------------------------------------------------------------------------
 from . import multiseed
-SHOW_BAND = False
-multiseed.SHOW_BAND = SHOW_BAND
+# Bands are driven by the MULTISEED_BAND env var (see multiseed.py); set this to
+# True to force them on for this script alone.
+SHOW_BAND = multiseed.SHOW_BAND
 
 
 
@@ -354,6 +355,9 @@ for direc in direcs:
 
             train_modes = modeloss_data[:,1      :1+  llw]
             test_modes  = modeloss_data[:,1+2*llw:1+3*llw]
+            # same slices of the across-seed band
+            tr_lo = ml_lo[:,1      :1+  llw]; tr_hi = ml_hi[:,1      :1+  llw]
+            te_lo = ml_lo[:,1+2*llw:1+3*llw]; te_hi = ml_hi[:,1+2*llw:1+3*llw]
 
             tmp = direc.split("_doSigma1_sisc1.0_aT0.0_aB0.0_")
             tmp2 = tmp[1].split("bat")
@@ -410,6 +414,10 @@ for direc in direcs:
                 de = 6
             else:
                 de = 3
+            multiseed.band(axs[0], epochs[:num_epochs:de],
+                           _etr_lo[:num_epochs:de], _etr_hi[:num_epochs:de], colors[k])
+            multiseed.band(axs[0], epochs[:num_epochs:de],
+                           _ete_lo[:num_epochs:de], _ete_hi[:num_epochs:de], colors[k])
             axs[0].plot(epochs[:num_epochs:de], 10**train[:num_epochs:de], '--', color=colors[k])
             axs[0].plot(epochs[:num_epochs:de], 10**test[:num_epochs:de],  marker='o', linestyle='none', fillstyle='none', color=colors[k])
             axs[0].plot([], [],  marker='s', linestyle='none', color=colors[k], label=title)
@@ -430,11 +438,19 @@ for direc in direcs:
                 ytmp = ss_train[:llw]**2 * train_modes[j, :]/mtrain
                 ymin_tr = min(ymin_tr, np.min(ytmp))
                 ymax_tr = max(ymax_tr, np.max(ytmp))
+                multiseed.band(axs[1+2*k], np.arange(llw),
+                               ss_train[:llw]**2 * tr_lo[j, :]/mtrain,
+                               ss_train[:llw]**2 * tr_hi[j, :]/mtrain,
+                               (0.2+0.7*j/num_epochs, 0, 0))
                 axs[1+2*k].plot(ytmp, '--', color=(0.2+0.7*j/num_epochs, 0, 0), alpha=0.5)
 
                 ytmp = ss_train[:llw]**2 * test_modes[j, :]/mtest                
                 ymin_te = min(ymin_te, np.min(ytmp))
                 ymax_te = max(ymax_te, np.max(ytmp))
+                multiseed.band(axs[2+2*k], np.arange(llw),
+                               ss_train[:llw]**2 * te_lo[j, :]/mtest,
+                               ss_train[:llw]**2 * te_hi[j, :]/mtest,
+                               (0, 0, 0.2+0.7*j/num_epochs))
                 axs[2+2*k].plot(ytmp, '--', color=(0, 0, 0.2+0.7*j/num_epochs), alpha=0.5)
                 last_ie = j
 
@@ -598,7 +614,7 @@ if fixed_num_epochs != 80:
     name += "_neAll"+str(fixed_num_epochs)
 
 path = don_code.figures_dir + "/"
-tmp = "Fig8_multiseed"
+tmp = "Fig8_multiseed" + multiseed.suffix()
 
 # -------------------------------------------------------------------------
 # Save figure 1 (loss curves)

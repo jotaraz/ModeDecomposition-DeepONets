@@ -50,8 +50,9 @@ nets_dir = don_code.nets_dir
 ## Set SHOW_BAND = True to shade the min..max spread across seeds.
 ## ---------------------------------------------------------------------------
 from . import multiseed
-SHOW_BAND = False
-multiseed.SHOW_BAND = SHOW_BAND
+# Bands are driven by the MULTISEED_BAND env var (see multiseed.py); set this to
+# True to force them on for this script alone.
+SHOW_BAND = multiseed.SHOW_BAND
 
 
         
@@ -242,6 +243,9 @@ for direc in direcs:
             epoch_modes = modeloss_data[:,0]
             train_modes = modeloss_data[:,1      :1+  llw]
             test_modes  = modeloss_data[:,1+2*llw:1+3*llw]
+            # matching slices of the across-seed band, keyed like tmp_mode_losses
+            _band_err = {"train": (ml_lo[:,1      :1+  llw], ml_hi[:,1      :1+  llw]),
+                         "test":  (ml_lo[:,1+2*llw:1+3*llw], ml_hi[:,1+2*llw:1+3*llw])}
 
             tmp_mode_losses = {}
             tmp_mode_losses["train"] = {"err": train_modes, 
@@ -281,6 +285,11 @@ for direc in direcs:
                     base_col    = tmp_mode_losses[key]["col"]
                     ## weighted
                     ytmp = ss_train[:llw]**2 * mode_losses[epoch, :]*tmp_mode_losses[key]["sf"] #/mtrain
+                    _blo, _bhi = _band_err[key]
+                    multiseed.band(axs[ik], shifted_xax,
+                                   ss_train[:llw]**2 * _blo[epoch, :]*tmp_mode_losses[key]["sf"],
+                                   ss_train[:llw]**2 * _bhi[epoch, :]*tmp_mode_losses[key]["sf"],
+                                   base_col * (0.2+0.7*epoch/max_epoch))
                     min2 = min(min2, np.min(ytmp))
                     max2 = max(max2, np.max(ytmp))
                     axs.plot(shifted_xax, ytmp, '--', color=base_col * (0.2+0.7*epoch/max_epoch), alpha=alphaval, label=lab)
@@ -325,7 +334,7 @@ axs.set_xlabel(r"mode index $i$", fontsize=fontsize)
 # axs2[1].set_xticks([0, 19, 39], [1, 20, 40], fontsize=fontsize) #label(r"unweighted mode loss $L_j$", fontsize=fontsize)
 
 path = don_code.figures_dir + "/"
-tmp = "Fig1_bottom_right_multiseed"
+tmp = "Fig1_bottom_right_multiseed" + multiseed.suffix()
 fig.savefig(path+"/pdfs/"+tmp+".pdf")
 fig.savefig(path+"/pngs/"+tmp+".png")
 

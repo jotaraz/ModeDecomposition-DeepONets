@@ -44,8 +44,9 @@ nets_dir = don_code.nets_dir
 ## Set SHOW_BAND = True to shade the min..max spread across seeds.
 ## ---------------------------------------------------------------------------
 from . import multiseed
-SHOW_BAND = False
-multiseed.SHOW_BAND = SHOW_BAND
+# Bands are driven by the MULTISEED_BAND env var (see multiseed.py); set this to
+# True to force them on for this script alone.
+SHOW_BAND = multiseed.SHOW_BAND
 
 
 
@@ -268,6 +269,8 @@ for dir in direcs:
         
         train_modes = modeloss_data[:,1      :1+  llw]
         test_modes  = modeloss_data[:,1+2*llw:1+3*llw]
+        _mlo, _mhi = multiseed.load_mean(dir, "log_modes.txt")[1:3]
+        _tr_lo = _mlo[:,1:1+llw]; _tr_hi = _mhi[:,1:1+llw]
 
         lossdata, _, _, _ = multiseed.load_mean(dir, "log.txt")
         epochs0       = lossdata[:num_epochs_loss:2,0]
@@ -300,6 +303,10 @@ for dir in direcs:
                 label = "initial"
             elif epoch == plot_epoch_ids[-1]:
                 label = "final"
+            multiseed.band(axs[0,k], np.arange(llw),
+                           ss_train[:llw]**2*_tr_lo[epoch,:] / m_train,
+                           ss_train[:llw]**2*_tr_hi[epoch,:] / m_train,
+                           (0.2+0.7*epoch/max(plot_epoch_ids), 0, 0))
             axs[0,k].plot(ss_train[:llw]**2*train_modes[epoch,:] / m_train, '--', color=(0.2+0.7*epoch/max(plot_epoch_ids), 0, 0), alpha=alphaval, label=label)
             
         axs[0,k].set_yscale("log")
@@ -363,7 +370,7 @@ axs[0,1].set_title(r"$w=$ "+str(w2), fontsize=fontsize)
 fig.subplots_adjust(wspace=0.0, hspace=0.0, right=0.99, left=0.25, top=0.92, bottom=0.11)
 
 path = don_code.figures_dir
-tmp = "Fig9b_multiseed"
+tmp = "Fig9b_multiseed" + multiseed.suffix()
 fig.savefig(path+"/pdfs/"+tmp+".pdf")
 fig.savefig(path+"/pngs/"+tmp+".png")
 #don_code.plt.show()
