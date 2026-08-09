@@ -6,10 +6,13 @@ output goes to figures/{pdfs,pngs}/Fig*_multiseed.{pdf,png} so the originals are
 never overwritten.
 
 Excluded:
-  Figure 6  -- its synthetic datasets (synthv14/15/18/19) do not exist anywhere,
-               so those four nets were not part of the sweep.
   Figure 12 -- uses no DeepONets at all, only the raw synthv11 data, so there is
                nothing to average.
+
+Figure 6 used to be excluded too, because its synthetic datasets
+(synthv14/15/18/19) did not exist anywhere and those four nets were therefore
+not part of the sweep.  They were regenerated as synthv09082026 and all ten
+seeds trained afterwards, so Figure 6 is now included like every other figure.
 
 Every *_multiseed analysis script has a SHOW_BAND flag at the top (default
 False); set it to True to shade the min..max spread across seeds behind each
@@ -26,7 +29,9 @@ commands = {
     "3":  "python -m src.analysis.RELEVANT.plot_gd_or_adam_modelosses2_multiseed 3 1 1 2",
     "4":  "python -m src.analysis.RELEVANT.analyze_mode_losses_rotate_multiseed 3 4 1 32",
     "5":  "python -m src.analysis.RELEVANT.plot_gd_or_adam_modelosses2_multiseed 3 0 1 2",
-    # "6": excluded -- no synthv datasets, see module docstring
+    # "6" is no longer excluded: the synthetic datasets were regenerated as
+    # synthv09082026 and all ten seeds trained, see the script's header.
+    "6":  "python -m src.analysis.spectral_bias.plot_res3_sidebyside_mat_gridspec_multiseed 0.2",
     "7":  "python -m src.analysis.RELEVANT.investigate_branch_sb_scale2_multiseed 2 1",
     "8":  "python -m src.analysis.RELEVANT.analyze_mode_losses_rotate2_multiseed 3 0 2 32",
     "9a": "python -m src.analysis.RELEVANT.show_components_mult_multsizes_multiseed 3 -1 4000 1",
