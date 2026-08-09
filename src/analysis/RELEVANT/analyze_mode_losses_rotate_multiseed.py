@@ -494,12 +494,14 @@ for direc in direcs:
             axs[2+2*k].plot(ytmp, '.-', color="k") #, color=(0, 0, 0.2+0.7*j/num_epochs))
 
             last_ie = 0
+            _stage_ids = list(range(0, num_epochs, 4))
             for j in range(0, num_epochs, 4):
                 #for j in range(0, np.shape(train_modes)[0], 10):
                 ytmp = ss_train[:llw]**2 * train_modes[j, :]/mtrain
                 ymin_tr = min(ymin_tr, np.min(ytmp))
                 ymax_tr = max(ymax_tr, np.max(ytmp))
-                multiseed.band(axs[1+2*k], np.arange(llw),
+                if multiseed.is_endpoint_stage(j, _stage_ids):
+                  multiseed.band(axs[1+2*k], np.arange(llw),
                                ss_train[:llw]**2 * tr_lo[j, :]/mtrain,
                                ss_train[:llw]**2 * tr_hi[j, :]/mtrain,
                                (0.2+0.7*j/num_epochs, 0, 0))
@@ -508,7 +510,8 @@ for direc in direcs:
                 ytmp = ss_train[:llw]**2 * test_modes[j, :]/mtest                
                 ymin_te = min(ymin_te, np.min(ytmp))
                 ymax_te = max(ymax_te, np.max(ytmp))
-                multiseed.band(axs[2+2*k], np.arange(llw),
+                if multiseed.is_endpoint_stage(j, _stage_ids):
+                  multiseed.band(axs[2+2*k], np.arange(llw),
                                ss_train[:llw]**2 * te_lo[j, :]/mtest,
                                ss_train[:llw]**2 * te_hi[j, :]/mtest,
                                (0, 0, 0.2+0.7*j/num_epochs))
