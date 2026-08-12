@@ -1,0 +1,37 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: produce the off-grid REFERENCE solutions.
+#
+# Solves the clean 2*pi-periodic KdV problem (the one stated in the paper) on a
+# 4x refined grid, so the 401 stored coordinates are nested at every 4th point
+# and the new coordinates sit at 1/4, 1/2 and 3/4 of each original cell.  That
+# layout lets the off-grid error be resolved as a function of distance from the
+# nearest training coordinate, with the cell midpoint as the worst case.
+#
+# The branch input is unchanged (the original 401-sensor _P.txt): only the
+# output coordinates are refined.
+#
+#     condor_submit_bid 35 kdv_reference.sub
+#
+# 10 chunks of 100 samples.  Cost per output time scales like refine^4 (dt must
+# shrink like h^3 for RK4 stability), so refine=4 is 256x the refine=1 work:
+# ~15 min per chunk, all 10 in parallel.
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/kdv_finegrid
+executable   = kdv_regen.sh
+arguments    = generate --outdir out/ref_refine4 --wrap unique400 --refine 4 --tags 1999 --chunk $(Process) --chunk-size 100 --progress-every 20000
+
+getenv       = True
+
+output       = logs/kdv_ref.$(ClusterId).$(Process).out
+error        = logs/kdv_ref.$(ClusterId).$(Process).err
+log          = logs/kdv_ref.$(ClusterId).$(Process).log
+
+# Pure NumPy, single-threaded in practice (the arrays are (100, 1600), too small
+# for BLAS threading to help). Memory is a handful of those arrays.
+request_cpus   = 2
+request_memory = 8192
+request_disk   = 8192
+request_gpus   = 0
+
+queue 10

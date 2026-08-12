@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# HTCondor submit file: single CPU training run of src/run_nosigma.py
+# HTCondor submit file: single CPU training run of src/run_nosigma_sgd.py
 #
 # Submit WITH a bid (this is what sets your scheduling priority on the cluster):
 #     condor_submit_bid <BID> condor/run_nosigma.sub
@@ -10,7 +10,7 @@
 
 # Wrapper that sets cwd=src/, forces CPU, headless matplotlib, and runs the job.
 initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
-executable   = condor/run_nosigma.sh
+executable   = condor/run_nosigma_sgd.sh
 arguments    =
 
 # Ship the whole repo's environment variables to the node (harmless; the
@@ -18,9 +18,9 @@ arguments    =
 getenv       = True
 
 # --- Logs (the condor/logs/ directory must already exist) ------------------
-output       = condor/logs/run_nosigma.$(ClusterId).$(ProcId).out
-error        = condor/logs/run_nosigma.$(ClusterId).$(ProcId).err
-log          = condor/logs/run_nosigma.$(ClusterId).$(ProcId).log
+output       = condor/logs/run_nosigma_sgd.$(ClusterId).$(ProcId).out
+error        = condor/logs/run_nosigma_sgd.$(ClusterId).$(ProcId).err
+log          = condor/logs/run_nosigma_sgd.$(ClusterId).$(ProcId).log
 
 # --- Resource request ------------------------------------------------------
 # CPU-only job: request no GPUs. Memory/disk (MB) are modest — one KdV dataset

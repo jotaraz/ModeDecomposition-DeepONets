@@ -1,0 +1,23 @@
+# Redraw Figure 6 from the retrained synthv09082026 nets (cluster 17447660).
+#
+#   condor_submit_bid 100 condor/fig6_plot.sub
+#
+# Reads only log.txt / log_modes.txt from the four net directories; no dataset
+# is loaded. Cheap, but pgf+usetex shells out to pdflatex, so it gets a couple
+# of cores and real scratch space rather than the 1 GB /tmp.
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/fig6_plot.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/fig6_plot.$(ClusterId).$(ProcId).out
+error        = condor/logs/fig6_plot.$(ClusterId).$(ProcId).err
+log          = condor/logs/fig6_plot.$(ClusterId).$(ProcId).log
+
+request_cpus   = 2
+request_memory = 4096
+request_disk   = 4096
+request_gpus   = 0
+
+queue

@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: generate 5 single-length-scale 2D GRF datasets
+# (l = 0.05, 0.1, 0.3, 0.5, 0.7), 1000 samples each, at t=0.004.
+#
+# Submit WITH a bid:
+#     condor_submit_bid <BID> condor/gen_grf_multi.sub
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/gen_grf_multi.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/gen_grf_multi.$(ClusterId).$(ProcId).out
+error        = condor/logs/gen_grf_multi.$(ClusterId).$(ProcId).err
+log          = condor/logs/gen_grf_multi.$(ClusterId).$(ProcId).log
+
+# CPU-only, single-threaded generation. Output is 5 datasets x (~100 MB _P +
+# ~100 MB _U + ~62 MB npz + tiny _R) written to data2d/ on /fast (~1.3 GB total).
+request_cpus   = 1
+request_memory = 4096
+request_disk   = 4096
+request_gpus   = 0
+
+queue

@@ -1,0 +1,11 @@
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/fig35.sh
+getenv       = True
+output       = condor/logs/fig35.$(ClusterId).out
+error        = condor/logs/fig35.$(ClusterId).err
+log          = condor/logs/fig35.$(ClusterId).log
+request_cpus   = 4
+request_memory = 16384
+request_disk   = 8192
+request_gpus   = 0
+queue

@@ -1,0 +1,35 @@
+# Figure 6 (spectral bias on synthetic data): the four nets of
+# list_nets_seeds.txt lines 344-348, at vtag=0 only.
+#
+# These are the only nets of arXiv:2602.21910 that the 10-seed sweep skipped,
+# because their datasets (synthv14/15/18/19) did not exist. They are trained
+# here against the freshly generated synthv09082026 set instead, keeping the
+# true signed uendtags (fs+0.2 = increasing freq., fs-0.2 = decreasing), so the
+# net directory names differ from the published ones and
+# src/analysis/spectral_bias/plot_res3_sidebyside_mat_gridspec.py has to be
+# pointed at them before Figure 6 can be redrawn.
+#
+#   condor_submit_bid 100 condor/fig6.sub
+#
+# Arguments per net (execute_don.py, 20 mandatory):
+#   Nep vtag d w llw doplot batch_name lrstag init_lr decay num_data whichT \
+#   doSigma uendtag sisc exp doadam doStacked adaptiveLR momentum
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/train_one.sh
+arguments    = $(args)
+getenv       = True
+
+output       = condor/logs/fig6.$(ClusterId).$(ProcId).out
+error        = condor/logs/fig6.$(ClusterId).$(ProcId).err
+log          = condor/logs/fig6.$(ClusterId).$(ProcId).log
+
+# CPU-only, same shape as the sweep. These are the smallest nets in the paper
+# (w50, llw5) but see 5000 samples rather than 1000, so the per-epoch cost sits
+# near the w100/numd1000 calibration point (134 s at Nep2000).
+request_cpus   = 4
+request_memory = 8192
+request_disk   = 8192
+request_gpus   = 0
+
+queue args from condor/fig6_args.txt

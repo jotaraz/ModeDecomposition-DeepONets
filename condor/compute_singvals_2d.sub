@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: compute singular values of the three 2D heat U matrices
+# in data/datasets that have no _singvals.txt yet (grf l0.05, grf l0.1-0.2,
+# sine K8), all at t=0.004.
+#
+# Submit WITH a bid:
+#     condor_submit_bid <BID> condor/compute_singvals_2d.sub
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/compute_singvals_2d.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/compute_singvals_2d.$(ClusterId).$(ProcId).out
+error        = condor/logs/compute_singvals_2d.$(ClusterId).$(ProcId).err
+log          = condor/logs/compute_singvals_2d.$(ClusterId).$(ProcId).log
+
+# CPU-only. Each U is 4096x1000 float64 (~33 MB); the 100 MB text parse dominates.
+request_cpus   = 8
+request_memory = 16384
+request_disk   = 4096
+request_gpus   = 0
+
+queue

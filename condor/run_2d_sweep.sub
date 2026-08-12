@@ -1,0 +1,138 @@
+# HTCondor submit file: parallel 2D DeepONet sweep (rub_2d_sqeep.py).
+# 40 configs = 5 datasets x N{50,100} x depth{5,10} x {learned,SVD} trunk.
+# One proc per config; each runs execute_don.py 4000 epochs on CPU.
+#   condor_submit_bid <BID> condor/run_2d_sweep.sub
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/run_2d_cfg.sh
+getenv       = True
+
+output = condor/logs/sweep2d.$(ClusterId).$(ProcId).out
+error  = condor/logs/sweep2d.$(ClusterId).$(ProcId).err
+log    = condor/logs/sweep2d.$(ClusterId).$(ProcId).log
+
+request_cpus   = 4
+request_memory = 8192
+request_disk   = 4096
+request_gpus   = 0
+
+# [0] 4000 0 5 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [1] 4000 0 5 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [2] 4000 0 10 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [3] 4000 0 10 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [4] 4000 0 5 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [5] 4000 0 5 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [6] 4000 0 10 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [7] 4000 0 10 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_sine_nx64_K8_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [8] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [9] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [10] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [11] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [12] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [13] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [14] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [15] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.7_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [16] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [17] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [18] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [19] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [20] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [21] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [22] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [23] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.3_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [24] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [25] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [26] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [27] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [28] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [29] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [30] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [31] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.1-0.2_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [32] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [33] 4000 0 5 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [34] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [35] 4000 0 10 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 50 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [36] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [37] 4000 0 5 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 5 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue
+# [38] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 -1 0 t0.004 First 1.0 1 0 0 1
+queue
+# [39] 4000 0 10 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+arguments = 4000 0 10 335 100 0 heat2d_grf_nx64_l0.05_D1 32 0.0001 0.95 1000 0 1 t0.004 1.0 1.0 1 0 0 1
+queue

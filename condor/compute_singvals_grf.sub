@@ -1,0 +1,24 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: compute singular values of the 5 single-length-scale
+# 2D GRF U matrices (l=0.05,0.1,0.3,0.5,0.7) in 2d-pdes/data2d, at t=0.004.
+#
+# Submit WITH a bid:
+#     condor_submit_bid <BID> condor/compute_singvals_grf.sub
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/compute_singvals_grf.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/compute_singvals_grf.$(ClusterId).$(ProcId).out
+error        = condor/logs/compute_singvals_grf.$(ClusterId).$(ProcId).err
+log          = condor/logs/compute_singvals_grf.$(ClusterId).$(ProcId).log
+
+# CPU-only. Each U is 1000x4096; SVD is a few TFLOP, memory-light.
+request_cpus   = 8
+request_memory = 8192
+request_disk   = 2048
+request_gpus   = 0
+
+queue

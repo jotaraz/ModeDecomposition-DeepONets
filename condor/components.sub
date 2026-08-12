@@ -1,0 +1,18 @@
+# Fig 9 post-processing for the 10-seed sweep: 5 widths x 10 seeds = 50 nets,
+# one net per job (50 runs vs ~30 slots, so it self-balances; no packing needed).
+#   condor_submit_bid 100 condor/components.sub
+# Idempotent: compute_components_fixedindices.py skips any net that already has
+# log_diagoffdiag_new.txt, so resubmitting is a no-op for completed work.
+# 16 GB: the (num_pars x llw) gradient matrix is 482 MB at w495, held twice.
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/components_one.sh
+arguments    = $(args)
+getenv       = True
+output       = condor/logs/comp.$(ClusterId).$(ProcId).out
+error        = condor/logs/comp.$(ClusterId).$(ProcId).err
+log          = condor/logs/comp.$(ClusterId).$(ProcId).log
+request_cpus   = 4
+request_memory = 16384
+request_disk   = 8192
+request_gpus   = 0
+queue args from condor/components_args.txt

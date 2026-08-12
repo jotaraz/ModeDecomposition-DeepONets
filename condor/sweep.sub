@@ -1,0 +1,31 @@
+# 10-seed sweep: every DeepONet of arXiv:2602.21910 except the four Figure 6
+# (synthv) nets, trained from seeds v0..v9.  890 runs, ~133 CPU-hours, packed
+# by make_seed_sweep.py into balanced jobs of ~4.4 h each.
+#
+#   python make_seed_sweep.py 30            # regenerate manifests
+#   condor_submit_bid 100 condor/sweep.sub
+#
+# Safe to resubmit: run_manifest.sh skips runs whose final checkpoint exists and
+# deletes + retrains anything incomplete, so a preempted job loses at most the
+# single run that was in flight.
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/run_manifest.sh
+arguments    = $(mfile)
+getenv       = True
+
+output       = condor/logs/sweep.$(ClusterId).$(ProcId).out
+error        = condor/logs/sweep.$(ClusterId).$(ProcId).err
+log          = condor/logs/sweep.$(ClusterId).$(ProcId).log
+
+# CPU-only. Peak memory is dominated by the widest net (w495 / stacked w42,
+# ~1.2M float64 parameters) plus the JAX runtime -- well under 8 GB, but the
+# headroom is cheap insurance against an OOM kill mid-job.
+request_cpus   = 4
+request_memory = 8192
+request_disk   = 8192
+request_gpus   = 0
+
+# 'mfile', not 'manifest': manifest is a reserved HTCondor submit command and
+# using it as the queue variable fails with "must eval to a boolean".
+queue mfile from condor/sweep_jobs.txt

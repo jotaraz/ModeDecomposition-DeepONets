@@ -1,0 +1,27 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: grid-convergence study of the clean 2pi-periodic KdV
+# problem, and the distance from the stored dataset to a converged solution.
+#
+#     condor_submit_bid 25 kdv_converge.sub
+#
+# Cost is dominated by refine=8: dt shrinks like refine^3, so the work per
+# output time scales like refine^4 (8^4 = 4096x the refine=1 run).  Still only
+# a few minutes for 8 samples, single core.
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/kdv_finegrid
+executable   = kdv_regen.sh
+arguments    = converge --nsamples 16 --tags 10 1999 --refines 1 4
+
+getenv       = True
+
+output       = logs/kdv_converge.$(ClusterId).$(ProcId).out
+error        = logs/kdv_converge.$(ClusterId).$(ProcId).err
+log          = logs/kdv_converge.$(ClusterId).$(ProcId).log
+
+request_cpus   = 4
+request_memory = 16384
+request_disk   = 8192
+request_gpus   = 0
+
+queue

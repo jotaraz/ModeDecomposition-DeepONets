@@ -1,0 +1,156 @@
+# HTCondor submit file: 2D N-sweep on the 5000-sample datasets.
+# 3 datasets x 7 inner dimensions x {SVD, learned} trunk = 42 nets,
+#     N   = 10, 20, 40, 60, 80, 100, 120
+#     d   = 10, w = 500, Nep = 10000
+# All other hyperparameters as in condor/run_2d_m5000.sub: vtag0, lrAdam32 =
+# 1e-4/0.95, num_data=5000, t0.004, exp0.0, unstacked, adaptiveLR0, momentum1;
+# SVD = whichT0/doSigma1/sisc1.0, learned = whichT-1/doSigma0/siscFirst.
+#
+# Motivation: at m=5000 the test error was still falling at epoch 4000 (no
+# overfitting, unlike m=1000), so Nep is raised to 10000 here.
+#
+# COST: ~5x the data of the m=1000 runs and 2.5x the epochs, at w=500. Expect
+# these to be much longer than anything run so far, and each net stores 100
+# checkpoint groups instead of 40.
+#
+#   condor_submit_bid <BID> condor/run_2d_nsweep_m5000.sub
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/run_2d_cfg.sh
+getenv       = True
+
+output = condor/logs/nsweep5k.$(ClusterId).$(ProcId).out
+error  = condor/logs/nsweep5k.$(ClusterId).$(ProcId).err
+log    = condor/logs/nsweep5k.$(ClusterId).$(ProcId).log
+
+request_cpus   = 4
+request_memory = 16384
+request_disk   = 8192
+request_gpus   = 0
+
+# [0] SVD trunk, heat2d_sine_nx64_K8_D1_m5000, N=10 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 10 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [1] learned trunk, heat2d_sine_nx64_K8_D1_m5000, N=10 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 10 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [2] SVD trunk, heat2d_sine_nx64_K8_D1_m5000, N=20 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 20 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [3] learned trunk, heat2d_sine_nx64_K8_D1_m5000, N=20 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 20 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [4] SVD trunk, heat2d_sine_nx64_K8_D1_m5000, N=40 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 40 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [5] learned trunk, heat2d_sine_nx64_K8_D1_m5000, N=40 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 40 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [6] SVD trunk, heat2d_sine_nx64_K8_D1_m5000, N=60 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 60 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [7] learned trunk, heat2d_sine_nx64_K8_D1_m5000, N=60 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 60 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [8] SVD trunk, heat2d_sine_nx64_K8_D1_m5000, N=80 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 80 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [9] learned trunk, heat2d_sine_nx64_K8_D1_m5000, N=80 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 80 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [10] SVD trunk, heat2d_sine_nx64_K8_D1_m5000, N=100 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 100 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [11] learned trunk, heat2d_sine_nx64_K8_D1_m5000, N=100 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 100 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [12] SVD trunk, heat2d_sine_nx64_K8_D1_m5000, N=120 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 120 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [13] learned trunk, heat2d_sine_nx64_K8_D1_m5000, N=120 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 120 0 heat2d_sine_nx64_K8_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [14] SVD trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=10 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 10 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [15] learned trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=10 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 10 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [16] SVD trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=20 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 20 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [17] learned trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=20 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 20 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [18] SVD trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=40 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 40 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [19] learned trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=40 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 40 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [20] SVD trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=60 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 60 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [21] learned trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=60 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 60 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [22] SVD trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=80 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 80 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [23] learned trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=80 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 80 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [24] SVD trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=100 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 100 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [25] learned trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=100 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 100 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [26] SVD trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=120 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 120 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [27] learned trunk, heat2d_grf_nx64_l0.1-0.2_D1_m5000, N=120 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 120 0 heat2d_grf_nx64_l0.1-0.2_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [28] SVD trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=10 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 10 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [29] learned trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=10 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 10 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [30] SVD trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=20 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 20 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [31] learned trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=20 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 20 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [32] SVD trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=40 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 40 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [33] learned trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=40 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 40 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [34] SVD trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=60 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 60 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [35] learned trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=60 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 60 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [36] SVD trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=80 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 80 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [37] learned trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=80 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 80 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [38] SVD trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=100 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 100 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [39] learned trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=100 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 100 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue
+# [40] SVD trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=120 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 120 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 0 1 t0.004 1.0 0.0 1 0 0 1
+queue
+# [41] learned trunk, heat2d_grf_nx64_l0.05_D1_m5000, N=120 d=10 w=500 Nep=10000
+arguments = 10000 0 10 500 120 0 heat2d_grf_nx64_l0.05_D1_m5000 32 0.0001 0.95 5000 -1 0 t0.004 First 0.0 1 0 0 1
+queue

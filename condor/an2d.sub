@@ -1,0 +1,11 @@
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/an2d.sh
+getenv       = True
+output       = condor/logs/an2d.$(ClusterId).out
+error        = condor/logs/an2d.$(ClusterId).err
+log          = condor/logs/an2d.$(ClusterId).log
+request_cpus   = 4
+request_memory = 16384
+request_disk   = 8192
+request_gpus   = 0
+queue

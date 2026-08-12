@@ -31,7 +31,11 @@ env/
 # Jupyter notebooks checkpoints
 .ipynb_checkpoints/
 
-condor/
+# The condor/ submit files and wrapper scripts ARE tracked: they are what
+# actually produced the trained nets and the paper's figures. Only the job
+# output and editor backups are ignored.
+condor/logs/
+condor/*.bak
 
 # IDE / editor
 .idea/

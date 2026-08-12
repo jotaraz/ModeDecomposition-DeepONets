@@ -1,0 +1,27 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: generate the synthetic spectral-bias datasets by
+# running src/analysis/spectral_bias/run_synthetic_data_gen.py on a compute
+# node. Output goes to data/datasets/synth<vtag>_n<n>_N<N>_m<m>_*.txt
+#
+# Submit WITH a bid:
+#     condor_submit_bid <BID> condor/gen_synth.sub
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/gen_synth.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/gen_synth.$(ClusterId).$(ProcId).out
+error        = condor/logs/gen_synth.$(ClusterId).$(ProcId).err
+log          = condor/logs/gen_synth.$(ClusterId).$(ProcId).log
+
+# CPU-only and effectively single-threaded: the cost is a Python loop over the
+# m=5000 samples per candidate direction, not BLAS. Memory is dominated by the
+# 100x5000 float64 matrix plus savetxt buffering.
+request_cpus   = 2
+request_memory = 4096
+request_disk   = 2048
+request_gpus   = 0
+
+queue

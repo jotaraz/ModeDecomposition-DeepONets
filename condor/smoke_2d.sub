@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: 100-epoch DeepONet smoke test on the 2D heat sine
+# dataset (heat2d_sine_nx64_K8_D1, uendtag t0.004, which_T=0 SVD trunk).
+#
+# Submit WITH a bid:
+#     condor_submit_bid <BID> condor/smoke_2d.sub
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/smoke_2d.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/smoke_2d.$(ClusterId).$(ProcId).out
+error        = condor/logs/smoke_2d.$(ClusterId).$(ProcId).err
+log          = condor/logs/smoke_2d.$(ClusterId).$(ProcId).log
+
+# CPU-only JAX training (float64). Branch input is 4096-wide; full-batch over
+# 900 train samples, 100 epochs.
+request_cpus   = 4
+request_memory = 8192
+request_disk   = 4096
+request_gpus   = 0
+
+queue

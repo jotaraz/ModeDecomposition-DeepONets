@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: move + convert the 2D heat datasets from
+# 2d-pdes/data2d into data/datasets (transpose U to spatial x samples and
+# rename to the <name>_t0.004_U.txt training convention).
+#
+# Submit WITH a bid:
+#     condor_submit_bid <BID> condor/move_2d_to_datasets.sub
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/move_2d_to_datasets.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/move_2d_to_datasets.$(ClusterId).$(ProcId).out
+error        = condor/logs/move_2d_to_datasets.$(ClusterId).$(ProcId).err
+log          = condor/logs/move_2d_to_datasets.$(ClusterId).$(ProcId).log
+
+# CPU-only, I/O-bound (loadtxt + savetxt of ~100 MB text files x7).
+request_cpus   = 1
+request_memory = 4096
+request_disk   = 2048
+request_gpus   = 0
+
+queue

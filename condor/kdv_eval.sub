@@ -1,0 +1,29 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: evaluate all 12 run_grid DeepONets at coordinates they
+# were never trained on, resolved by distance from the nearest training point.
+#
+#     condor_submit_bid 35 kdv_eval.sub
+#
+# Uses the repo's .venv-linux (jax/flax are needed to rebuild the nets) and reads
+# data/nets + data/datasets read-only.
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/kdv_finegrid
+executable   = kdv_eval.sh
+arguments    = --reference out/ref_refine4/REFERENCE_nx1600_m1000_1999_U.txt --ref-grid out/ref_refine4/kdvREF_unique400_refine4_nx1600_R.txt --refine 4
+
+getenv       = True
+
+output       = logs/kdv_eval.$(ClusterId).$(ProcId).out
+error        = logs/kdv_eval.$(ClusterId).$(ProcId).err
+log          = logs/kdv_eval.$(ClusterId).$(ProcId).log
+
+# 12 nets, each rebuilt and applied to a (1600 x 1000) output; the SVD of the
+# 401x900 training matrix is recomputed per net. CPU-only -- JAX is forced onto
+# CPU by the wrapper.
+request_cpus   = 4
+request_memory = 32768
+request_disk   = 8192
+request_gpus   = 0
+
+queue

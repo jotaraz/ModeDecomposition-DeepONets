@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: compute singular values of every 1D _U matrix in
+# data/datasets (writes <stem>_U_singvals.txt next to each).
+#
+# Submit WITH a bid:
+#     condor_submit_bid <BID> condor/compute_singvals.sub
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/compute_singvals.sh
+arguments    =
+getenv       = True
+
+output       = condor/logs/compute_singvals.$(ClusterId).$(ProcId).out
+error        = condor/logs/compute_singvals.$(ClusterId).$(ProcId).err
+log          = condor/logs/compute_singvals.$(ClusterId).$(ProcId).log
+
+# CPU-only. The SVDs are a few TFLOP each (401x5000 KdV matrices), so give BLAS
+# a handful of cores; memory is dominated by loading the ~51 MB text matrices.
+request_cpus   = 8
+request_memory = 8192
+request_disk   = 2048
+request_gpus   = 0
+
+queue

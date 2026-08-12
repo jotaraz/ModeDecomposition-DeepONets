@@ -1,0 +1,30 @@
+# ---------------------------------------------------------------------------
+# HTCondor submit file: re-run the ORIGINAL py-pde generator to confirm the
+# dataset's provenance, and cross-check our reference data against py-pde with
+# the off-by-one grid bug fixed.
+#
+#     condor_submit_bid 35 kdv_pypde.sub
+#
+# Installs py-pde into a throwaway venv in the workdir on first run (the compute
+# nodes have PyPI access through the proxy). The repo's .venv-linux is untouched.
+# ---------------------------------------------------------------------------
+
+initialdir   = /fast/jtaraz/MISC/kdv_finegrid
+executable   = kdv_pypde.sh
+arguments    = --nsamples 4 --configs A B C --reference out/ref_refine4/REFERENCE_nx1600_m1000_1999_U.txt
+
+getenv       = True
+
+output       = logs/kdv_pypde.$(ClusterId).$(ProcId).out
+error        = logs/kdv_pypde.$(ClusterId).$(ProcId).err
+log          = logs/kdv_pypde.$(ClusterId).$(ProcId).log
+
+# py-pde with solver="scipy" is a per-sample serial integrator with 1999 tracker
+# stops; the 1600-cell config C is the expensive one. Single core is right --
+# there is no parallelism to exploit -- but give it room for the numba cache.
+request_cpus   = 2
+request_memory = 8192
+request_disk   = 16384
+request_gpus   = 0
+
+queue

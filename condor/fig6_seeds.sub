@@ -1,0 +1,31 @@
+# Figure 6 seed sweep: the four Fig. 6 nets at vtag = 1..9 (36 runs), i.e. the
+# seeds the main 10-seed sweep skipped because the synthv datasets did not
+# exist. vtag=0 was trained separately by condor/fig6.sub.
+#
+#   condor_submit_bid 100 condor/fig6_seeds.sub
+#
+# vtag reseeds jax.random.PRNGKey only, i.e. the network INITIALISATION;
+# load_dataset takes a deterministic 90/10 prefix split with no shuffling, so
+# every seed sees identical data. Same as the main sweep.
+#
+# Safe to resubmit: execute_don.py no-ops when the net directory already exists
+# (execute_don.py:120), so completed runs are skipped rather than redone.
+#
+# ~220 s per run measured at vtag=0 (163-243 s across four nodes), so ~2.4
+# CPU-hours total.
+
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/train_one.sh
+arguments    = $(args)
+getenv       = True
+
+output       = condor/logs/fig6_seeds.$(ClusterId).$(ProcId).out
+error        = condor/logs/fig6_seeds.$(ClusterId).$(ProcId).err
+log          = condor/logs/fig6_seeds.$(ClusterId).$(ProcId).log
+
+request_cpus   = 4
+request_memory = 8192
+request_disk   = 8192
+request_gpus   = 0
+
+queue args from condor/fig6_seeds_args.txt

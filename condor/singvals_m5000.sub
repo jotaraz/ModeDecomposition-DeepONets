@@ -1,0 +1,11 @@
+initialdir   = /fast/jtaraz/MISC/ModeDecomposition-DeepONets
+executable   = condor/singvals_m5000.sh
+getenv       = True
+output = condor/logs/sv5k.$(ClusterId).out
+error  = condor/logs/sv5k.$(ClusterId).err
+log    = condor/logs/sv5k.$(ClusterId).log
+request_cpus   = 4
+request_memory = 32768
+request_disk   = 8192
+request_gpus   = 0
+queue
