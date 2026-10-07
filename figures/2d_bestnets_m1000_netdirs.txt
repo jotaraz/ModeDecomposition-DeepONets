@@ -1,0 +1,53 @@
+2D heat, ALL m=1000 nets (4x4 grid + width sweeps + earlier runs, Nep4000, vtag=0): best per dataset and trunk
+
+(a) lowest minimum test error over training; (b) lowest train error at epoch 4000.
+delta = ||A-Atilde||_F/||A||_F = 10**(log.txt col/2); col1 train, col4 test.
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : SVD   (a) lowest min test error
+N=50 d=15 w=700 exp=0
+min test 0.331398   final train 0.046592   final test 0.340235
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w700_llw50_batheat2d_sine_nx64_K8_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : SVD   (b) lowest final train error
+N=150 d=10 w=335 exp=0
+min test 0.464049   final train 0.015285   final test 0.654379
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw150_batheat2d_sine_nx64_K8_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : learned   (a)+(b) both criteria
+N=150 d=10 w=700 exp=0
+min test 0.423597   final train 0.021778   final test 0.464247
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w700_llw150_batheat2d_sine_nx64_K8_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : SVD   (a)+(b) both criteria
+N=200 d=15 w=700 exp=0
+min test 0.164269   final train 0.010236   final test 0.173361
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w700_llw200_batheat2d_grf_nx64_l0.1-0.2_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : learned   (a)+(b) both criteria
+N=150 d=10 w=700 exp=0
+min test 0.191536   final train 0.022252   final test 0.206066
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w700_llw150_batheat2d_grf_nx64_l0.1-0.2_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : SVD   (a)+(b) both criteria
+N=150 d=15 w=700 exp=0
+min test 0.329523   final train 0.012685   final test 0.349614
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w700_llw150_batheat2d_grf_nx64_l0.05_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : learned   (a) lowest min test error
+N=150 d=15 w=500 exp=0
+min test 0.417027   final train 0.071203   final test 0.468024
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d15_w500_llw150_batheat2d_grf_nx64_l0.05_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : learned   (b) lowest final train error
+N=150 d=15 w=600 exp=0
+min test 0.605352   final train 0.047321   final test 0.682999
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d15_w600_llw150_batheat2d_grf_nx64_l0.05_D1_t0.004_numd1000_lrAdam32_v0
+

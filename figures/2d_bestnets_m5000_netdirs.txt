@@ -1,0 +1,41 @@
+2D heat, m=5000 nets (w=335, Nep4000, vtag=0): best per dataset and trunk
+
+(a) lowest minimum test error over training; (b) lowest train error at epoch 4000.
+delta = ||A-Atilde||_F/||A||_F = 10**(log.txt col/2); col1 train, col4 test.
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : SVD   (a)+(b) both criteria
+N=50 d=15 w=335 exp=0
+min test 0.164626   final train 0.078923   final test 0.166168
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw50_batheat2d_sine_nx64_K8_D1_m5000_t0.004_numd5000_lrAdam32_v0
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : learned   (a)+(b) both criteria
+N=150 d=10 w=335 exp=0
+min test 0.194217   final train 0.122753   final test 0.194217
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw150_batheat2d_sine_nx64_K8_D1_m5000_t0.004_numd5000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : SVD   (a)+(b) both criteria
+N=200 d=15 w=335 exp=0
+min test 0.081828   final train 0.059364   final test 0.088168
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw200_batheat2d_grf_nx64_l0.1-0.2_D1_m5000_t0.004_numd5000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : learned   (a)+(b) both criteria
+N=150 d=10 w=335 exp=0
+min test 0.123190   final train 0.090477   final test 0.125868
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw150_batheat2d_grf_nx64_l0.1-0.2_D1_m5000_t0.004_numd5000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : SVD   (a)+(b) both criteria
+N=150 d=15 w=335 exp=0
+min test 0.290931   final train 0.074574   final test 0.292788
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw150_batheat2d_grf_nx64_l0.05_D1_m5000_t0.004_numd5000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : learned   (a)+(b) both criteria
+N=150 d=15 w=335 exp=0
+min test 0.348814   final train 0.254082   final test 0.348814
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw150_batheat2d_grf_nx64_l0.05_D1_m5000_t0.004_numd5000_lrAdam32_v0
+

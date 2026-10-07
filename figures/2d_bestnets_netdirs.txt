@@ -1,0 +1,78 @@
+Nets shown in figures/pdfs/2d_bestnets.pdf
+Pool: the 72 nets of condor/run_2d_sweep2.sub (Nep4000, w=335, vtag=0,
+lrAdam32 = 1e-4/0.95, numd1000, t0.004, exp0.0, unstacked).
+(a) = lowest minimum test error over training; (b) = lowest train error at epoch 4000.
+delta = ||A-Atilde||_F/||A||_F, i.e. 10**(log.txt col/2); col1 train, col4 test.
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : SVD   (a) lowest min test error
+N=50 d=15 w=335 Nep=4000
+min test delta = 0.455656   final train delta = 0.047394   final test delta = 0.559265
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw50_batheat2d_sine_nx64_K8_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : SVD   (b) lowest final train error
+N=150 d=10 w=335 Nep=4000
+min test delta = 0.464049   final train delta = 0.015285   final test delta = 0.654379
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw150_batheat2d_sine_nx64_K8_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : learned   (a) lowest min test error
+N=150 d=10 w=335 Nep=4000
+min test delta = 0.523063   final train delta = 0.065859   final test delta = 0.704741
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw150_batheat2d_sine_nx64_K8_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_sine_nx64_K8_D1
+trunk   : learned   (b) lowest final train error
+N=200 d=10 w=335 Nep=4000
+min test delta = 0.545390   final train delta = 0.062910   final test delta = 0.724114
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw200_batheat2d_sine_nx64_K8_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : SVD   (a) lowest min test error
+N=200 d=15 w=335 Nep=4000
+min test delta = 0.215546   final train delta = 0.028464   final test delta = 0.248976
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw200_batheat2d_grf_nx64_l0.1-0.2_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : SVD   (b) lowest final train error
+N=200 d=10 w=335 Nep=4000
+min test delta = 0.220631   final train delta = 0.016831   final test delta = 0.259946
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw200_batheat2d_grf_nx64_l0.1-0.2_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : learned   (a) lowest min test error
+N=150 d=10 w=335 Nep=4000
+min test delta = 0.218191   final train delta = 0.062739   final test delta = 0.241995
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw150_batheat2d_grf_nx64_l0.1-0.2_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.1-0.2_D1
+trunk   : learned   (b) lowest final train error
+N=200 d=10 w=335 Nep=4000
+min test delta = 0.224114   final train delta = 0.058477   final test delta = 0.249637
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw200_batheat2d_grf_nx64_l0.1-0.2_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : SVD   (a) lowest min test error
+N=150 d=15 w=335 Nep=4000
+min test delta = 0.437848   final train delta = 0.032030   final test delta = 0.532764
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw150_batheat2d_grf_nx64_l0.05_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : SVD   (b) lowest final train error
+N=150 d=5 w=335 Nep=4000
+min test delta = 0.678521   final train delta = 0.014180   final test delta = 0.812119
+whichT0_doStackedFalse_doSigma1_sisc1.0_aT0.0_aB0.0_exp0.0_Nep4000_d5_w335_llw150_batheat2d_grf_nx64_l0.05_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : learned   (a) lowest min test error
+N=150 d=15 w=335 Nep=4000
+min test delta = 0.487775   final train delta = 0.069367   final test delta = 0.605871
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d15_w335_llw150_batheat2d_grf_nx64_l0.05_D1_t0.004_numd1000_lrAdam32_v0
+
+dataset : heat2d_grf_nx64_l0.05_D1
+trunk   : learned   (b) lowest final train error
+N=200 d=10 w=335 Nep=4000
+min test delta = 0.515163   final train delta = 0.056021   final test delta = 0.724082
+whichT-1_doStackedFalse_doSigma0_siscFirst_aT0.0_aB0.0_exp0.0_Nep4000_d10_w335_llw200_batheat2d_grf_nx64_l0.05_D1_t0.004_numd1000_lrAdam32_v0
+
